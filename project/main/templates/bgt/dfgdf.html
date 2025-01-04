@@ -1,0 +1,44 @@
+<head>
+
+<style>
+    CSS for selected elements
+    .selectable {
+         padding: 10px;
+         margin: 5px;
+         border: 1px solid #ccc;
+         display: inline-block;
+         cursor: pointer;
+     }
+     .selected {
+         background-color: #007BFF;
+         color: white;
+         border-color: #0056b3;
+     }
+</style>
+</head>
+
+<body>
+<div class="selectable" id="item1">Item 1</div>
+    <div class="selectable" id="item2">Item 2</div>
+    <div class="selectable" id="item3">Item 3</div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const selectableElements = document.querySelectorAll(".selectable");
+
+            selectableElements.forEach(element => {
+                element.addEventListener("click", (event) => {
+                    if (event.ctrlKey) { // Check if Ctrl key is pressed
+                        element.classList.toggle("selected"); // Toggle selection
+                    } else {
+                        // Deselect other elements if Ctrl is not pressed
+                        selectableElements.forEach(el => el.classList.remove("selected"));
+                        element.classList.add("selected"); // Select only the clicked element
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+    

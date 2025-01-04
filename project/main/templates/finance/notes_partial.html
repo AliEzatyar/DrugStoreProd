@@ -1,0 +1,14 @@
+{% for note in notes  %}
+    <div>
+        <input class="form-check-input " style="display:block;direction:rtl;" type="checkbox" name="note_id{{note.id}}" value="{{note.id}}">
+        <div style="display:flex;flex-direction:column; flex-basis:{%if notes.len == 2 %}{%else%}33%{%endif%}; max-width: 30%;">
+            <span id="title">{{note.title|truncatechars:10}}</span>
+
+            <div id="note" >
+                <p style="overflow-wrap:break-word;">{{note.content|truncatechars:400}}</p>
+            </div>
+        </div>
+    </div>
+{%empty%}
+    nothing
+{% endfor %}

@@ -1,0 +1,251 @@
+/*--------------*/
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    direction: rtl;
+    /* Set the direction to right-to-left for Persian */
+}
+
+/* Table Styles */
+#table_title {
+    margin-top: 2%;
+    text-align: center;
+    color: #333;
+    margin: 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#list_table {
+    background-color: #fff;
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+#search_bill {
+    
+    display: flex;
+    margin-left: 10%;
+    justify-content: left;
+    align-items: left;
+    flex-direction: row;
+
+}
+
+#search_bill .btn {
+    width: 10%;
+}
+
+#container {
+    overflow-x: auto;
+}
+
+#list_table th, #list_table td {
+    padding: 5px 6px;
+
+    /* Set the text alignment to right for Persian */
+    border-bottom: 1px solid #ddd;
+}
+
+#list_table td::before {
+    background-color: lightgray;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+#list_table td {
+    vertical-align: middle;
+}
+
+#list_table a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#list_table a:hover {
+    color: #0056b3;
+}
+
+#list_table .baqi_amount {
+    background-color: lightgoldenrodyellow;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+#list_table .delete_button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#list_table .delete_button:hover {
+    background-color: #c82333;
+}
+
+#baqi_amount input {
+    margin-top: 15%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+
+    #list_table,
+    #list_table thead,
+    #list_table tbody,
+    #list_table th,
+    #list_table td,
+    #list_table tr {
+        display: block;
+    }
+
+    #search_bill .btn {
+        margin-right: 5%;
+        width: 50%;
+    }
+
+    #baqi_amount form {
+        margin: 0;
+        padding: 0;
+        display: inline;
+        flex-direction: row;
+    }
+
+    #baqi_amount input {
+        margin: 0;
+    }
+
+    #list_table th {
+        position: absolute;
+        top: -9999px;
+        right: -9999px;
+        /* Set the position to right for Persian */
+    }
+
+    #list_table td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        padding-right: 50%;
+        /* Set the padding-right for Persian */
+    }
+
+    #list_table td:before {
+        position: absolute;
+        right: 6px;
+        /* Set the position to right for Persian */
+        width: 45%;
+        padding-left: 10px;
+        /* Set the padding-left for Persian */
+        white-space: nowrap;
+    }
+
+    #list_table td:nth-of-type(1):before {
+        content: "نام دارو";
+    }
+
+    #list_table td:nth-of-type(2):before {
+        content: "کمپنی دارو";
+    }
+
+    #list_table td:nth-of-type(3):before {
+        content: "مقدار خرید";
+    }
+
+    #list_table td:nth-of-type(4):before {
+        content: "قیمت خرید";
+    }
+
+    #list_table td:nth-of-type(5):before {
+        content: "مجموع پول";
+    }
+
+    #list_table td:nth-of-type(7):before {
+        content: "چند ماه به انقضاء";
+    }
+
+    #list_table td:nth-of-type(6):before {
+        content: "تاریخ خرید";
+    }
+
+    #list_table td:nth-of-type(8):before {
+        content: "بیل نمبر";
+    }
+
+    #list_table td:nth-of-type(9):before {
+        content: "تعداد باقی";
+    }
+
+    #list_table td:nth-of-type(10):before {
+        content: "حذف کردن";
+    }
+}
+
+/*
+  selecting multiple elements
+*/
+.selectable {
+    cursor: pointer;
+}
+
+.selected {
+    background-color: #405265;
+    color: white;
+    border-color: #0056b3;
+}
+
+/*
+  right click context menu
+*/
+
+#contextMenu {
+    display: none;
+    /* Hidden by default */
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+}
+
+#contextMenu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+#contextMenu li:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+#qrs {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wholePhoto {
+    margin-top: 15px;
+    margin-right: 15px;
+    margin-left: 15px;
+
+}
+
+.qr-name {
+    margin-top: 10px;
+    direction: ltr;
+    text-align: center;
+}

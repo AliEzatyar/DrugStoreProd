@@ -1,0 +1,62 @@
+{% extends "main__/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container flex-column text-center " style="color: white;">
+        <span id="title"><p style="border-right: 6px solid #0ac33e;background-color: #007bff;width: 50%;margin: auto">جزئیات فروش</p></span>
+        <label style="border-left: 6px solid #0ac33e;background-color: #007bff;width: 50%;margin: auto" id="name_label">
+            {{ sld.name }}
+        </label>
+    </div>
+    <br>
+    <div class="container d-flex justify-content-center " >
+       
+        <div style="direction: rtl; width: 70%;margin-right: 25%">
+            <label>
+                شرکت دارو:
+            </label>
+            {{ sld.company }}
+            <br>
+            <label>
+                مقدار فروش:
+            </label>
+            {{ sld.amount|floatformat:1 }}
+            <br>
+            قیمت فروش:
+            <span> {{ sld.price }} </span>
+            <span id="price_lbl"> {{ sld.currency }} </span>
+            <br>
+            <label>
+                تاریخ فروش:
+            </label>
+            {{ sld.date }}
+            <br>
+            <label>
+                بیل نمبر:
+            </label>
+            {{ sld.sld_bill }}
+            <br>
+            <label>
+                مجموع:
+            </label>
+            {{ sld.total }}
+            <span id="price_lbl"> {{ sld.currency }} </span>
+            <br>
+            <div class="container flex-column p-0">
+                <a class="btn btn-success w-50 mb-1" href="{{ sld.bgt.get_absolute_url }}"> دیدن جزئیات خرید</a>
+                <form class="mb-1" id="see_bgts" method="get" action="{% url 'main:show_specific' 'sld' %}">
+                    <input type="hidden" value="{{ sld.name }}&&{{ sld.company }}" name="data">
+                    <input type="submit" class="btn btn-success w-50" value="فروشات">
+                </form>
+                <a class="btn btn-success w-50" href="{% url 'main:edit_sld' sld.name sld.company sld.date sld.customer %}">ویرایش کردن</a>
+                <form method="post" action="{% url 'main:delete_sld' sld.name sld.company sld.date sld.customer %}">
+                    <input class="btn btn-danger w-50 mt-1" type="submit" value="حذف فروش">
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+        <div style="margin-left: 25%;">
+            <img  class="img-thumbnail m-auto " src="{{ drug.photo.url }}" alt="No found">
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+
+upstream django_app{
+    server unix:/code/project/uwsgi_app.sock;
+}
+
+server {
+    listen 80;
+    server_name  x.com;
+    return 301 https://$host$request_uri;
+}
+
+server{
+    listen 443 ssl;
+    ssl_certificate /code/certificate.crt;
+    ssl_certificate_key /code/private.key;
+    server_name 192.168.216.196;
+    error_log stderr warn;
+    access_log /dev/stdout main;
+
+    location / {
+        include /etc/nginx/uwsgi_params;
+        uwsgi_pass django_app;
+    }
+    location /static/ {
+        alias /code/project/main/static/;
+    }
+
+    location /media/ {
+        alias /code/project/media/;
+    }
+    client_max_body_size 5M;
+}

@@ -1,0 +1,93 @@
+/* Responsive Form Styles */
+form {
+    max-width: 50%;
+    width: 90%;
+    /* Adjust width for smaller screens */
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.word{
+    text-align: center;
+}
+/* Input and Label Styles */
+label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+input {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Error Message Style */
+span {
+    font-size: 0.9rem;
+    color: red;
+    text-align: center;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Button Styles */
+input[type="submit"] {
+    font-size: 1rem;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    margin: 10px 0;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    form {
+        width: 100%;
+        /* Full width on small screens */
+        padding: 15px;
+    }
+
+    input {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    label {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        width: 80%;
+        /* Full width on extra-small screens */
+        padding: 10px;
+    }
+
+    input {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+
+    label {
+        font-size: 0.8rem;
+    }
+}

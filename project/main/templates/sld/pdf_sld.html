@@ -1,0 +1,49 @@
+{% extends 'main__/base.html' %}
+{% block title %}فروشات{% endblock %}
+{% block content %}
+    <h1 id="table_title">فروشات</h1>
+    <table id="list_table">
+        <thead>
+        <tr>
+            <th>نام دارو</th>
+            <th>کمپنی دارو</th>
+            <th>مقدار فروش</th>
+            <th>قیمت فروش</th>
+            <th>مجموع پول</th>
+            <th>واحد پول</th>
+            <th>مشخصات خرید</th>
+            <th>سود</th>
+            <th>خریدار</th>
+            <th>تاریخ فروش</th>
+            <th>بیل نمبر</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sld in slds %}
+            <tr>
+                <td><a href="{{ sld.get_absolute_url }}">{{ sld.name }}</a></td>
+                <td><a href="{{ sld.get_absolute_url }}">{{ sld.company }}</a></td>
+                <td>{{ sld.amount|floatformat:0 }}</td>
+                <td>{{ sld.price }}</td>
+                <td>{{ sld.total }}</td>
+                <td>{{ sld.currency }}</td>
+                <td style="background-color: lightgoldenrodyellow">
+                    <a href="{% url 'main:show_bgt_detail' sld.bgt.name sld.bgt.company sld.bgt.date %}">
+                        {{ sld.bgt }}
+                    </a>
+                </td>
+                {% if sld.profite < 0 %}
+                    <td style="background-color: red;color: white">{{ sld.profite }}</td>
+                {% else %}
+                    <td>{{ sld.profite }}</td>
+                {% endif %}
+
+                <td>{{ sld.customer }}</td>
+                <td>{{ sld.date }}</td>
+                <td>{{ sld.sld_bill }}</td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

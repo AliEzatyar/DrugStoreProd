@@ -1,0 +1,129 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  direction: rtl;
+  /* Added this line to set the text direction to right-to-left */
+  text-align: right;
+  /* Added this line to align the text to the right */
+}
+
+#non-photo {
+  width: 50%;
+
+}
+
+#photo_2 {
+  padding-top: 2%;
+}
+
+#photo {
+  padding-top: 8%;
+}
+
+#contents {
+  display: flex;
+  flex-direction: row;
+
+}
+
+body form {
+  margin: 2%;
+  padding: 2%;
+}
+
+body img {
+  width: 40%;
+  height: 40%;
+}
+
+/* Container Styles */
+#buy_form_fields {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Form Styles */
+.pair {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pair>div {
+  flex-basis: 48%;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#non-photo input, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#photo input, photo_2 input {
+  width: 100%;
+  border: 1px solid #ccc;
+  zoom: 80%;
+}
+
+#submitt {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Image Styles */
+#img-preview {
+
+  max-width: 50%;
+  width: 50%;
+  height: 60%;
+  display: block;
+  margin: 20px auto;
+}
+
+#buy_title {
+  text-align: center;
+  color: #007bff;
+}
+
+/* Responsive Styles */
+@media (max-width: 767px) {
+
+  #contents {
+    flex-direction: column;
+    /* Stack elements vertically */
+  }
+
+  #photo, #non-photo {
+    width: 100%;
+    /* Make elements full-width */
+    margin-right: 0;
+  }
+
+  .pair {
+    flex-direction: column;
+    /* Stack form fields vertically */
+  }
+
+  .pair>div {
+    flex-basis: 100%;
+    /* Make form fields full-width */
+  }
+
+  #submitt {
+    width: 100%;
+    /* Full-width button */
+  }
+}

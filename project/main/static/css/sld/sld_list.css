@@ -1,0 +1,113 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  direction: rtl; /* Set the direction to right-to-left for Persian */
+}
+
+/* Table Styles */
+#table_title {
+  text-align: center;
+  color: #333;
+  margin: 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#list_table {
+  background-color: #fff;
+  border-collapse: collapse;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#list_table th, #list_table td {
+  padding: 12px 16px;
+  text-align: center; /* Set the text alignment to right for Persian */
+  border-bottom: 1px solid #ddd;
+}
+
+#list_table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+#list_table td {
+  vertical-align: middle;
+}
+
+#list_table a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+#list_table a:hover {
+  color: #0056b3;
+}
+
+#list_table .baqi_amount {
+  background-color: lightgoldenrodyellow;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+#list_table .delete_button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#list_table .delete_button:hover {
+  background-color: #c82333;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  #list_table,
+  #list_table thead,
+  #list_table tbody,
+  #list_table th,
+  #list_table td,
+  #list_table tr {
+    display: block;
+  }
+
+  #list_table th {
+    position: absolute;
+    top: -9999px;
+    right: -9999px; /* Set the position to right for Persian */
+  }
+
+  #list_table td {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    padding-right: 50%; /* Set the padding-right for Persian */
+  }
+
+  #list_table td:before {
+    position: absolute; 
+    right: 6px; /* Set the position to right for Persian */
+    width: 45%;
+    padding-left: 10px; /* Set the padding-left for Persian */
+    white-space: nowrap;
+  }
+#list_table td:nth-of-type(1):before { content: "نام دارو"; }
+  #list_table td:nth-of-type(2):before { content: "کمپنی دارو"; }
+  #list_table td:nth-of-type(3):before { content: "مقدار فروش"; }
+  #list_table td:nth-of-type(4):before { content: "قیمت فروش"; }
+  #list_table td:nth-of-type(5):before { content: "مجموع پول"; }
+  #list_table td:nth-of-type(6):before { content: "واحد پول"; }
+  #list_table td:nth-of-type(7):before { content: "مشخصات خرید"; }
+  #list_table td:nth-of-type(8):before { content: "سود"; }
+  #list_table td:nth-of-type(9):before { content: "خریدار"; }
+  #list_table td:nth-of-type(10):before { content: "تاریخ فروش"; }
+  #list_table td:nth-of-type(11):before { content: "بیل نمبر"; }
+  #list_table td:nth-of-type(12):before { content: "حذف کردن"; }
+}

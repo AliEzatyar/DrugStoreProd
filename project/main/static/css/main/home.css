@@ -1,0 +1,109 @@
+/* Global Styles */
+body {
+    font-family: 'Vazir', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+}
+
+/* Drug Container Styles */
+.drug-container {
+    display: inline-block;
+    width: 100%;
+    max-width: 250px;
+    margin: 10px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    border: 1px solid #3ddcb6;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.drug-container:hover {
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.drug-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.drug-details {
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+.drug-details h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.drug-details p {
+    display: flex;
+    margin: 5px 0;
+    color: #666;
+    width: 100%;
+}
+
+.drug-details a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.drug-details a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styles */
+
+/* Mobile (smaller than 768px) */
+@media (max-width: 767px) {
+    .drug-container {
+        width: 100%;
+        margin: 10px 10px;
+    }
+
+    .drug-image {
+        height: 200px;
+    }
+}
+
+/* Tablets and small desktops (768px to 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .drug-container {
+        width: 100%;
+        /* Two items per row */
+        margin: 10px 10px;
+    }
+
+    .drug-image {
+        height: 250px;
+    }
+}
+
+/* Large desktops (1200px and above) */
+@media (min-width: 1200px) {
+    .drug-container {
+        width: 100%;
+        /* Three items per row */
+        margin: 15px 1%;
+    }
+
+    .drug-image {
+        height: 300px;
+    }
+}
+
+/* Extra-Large Screens (1600px and above) */
+@media (min-width: 1600px) {
+    .drug-container {
+        width: 100%;
+        /* Four items per row */
+        margin: 15px 1%;
+    }
+}

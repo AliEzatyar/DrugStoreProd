@@ -1,0 +1,25 @@
+{% extends 'main__/base.html' %}
+
+{% block content %}
+{% if no_baqi %}
+    <h3 style="text-align: center;color: red; width:100%;">این دوا ({{selected_bgt.name}}) باقی نمانده است</h3>
+    <br>
+<div style="margin-left: 25%;margin-right: 25%;width: auto;">
+
+    <form action="{% url 'main:show_specific' 'bgt' %}" method="get">
+      <input type="hidden" name="data" value="{{ selected_bgt.name }}&&{{ selected_bgt.company }}" />
+      <input type="submit" value="خرید های این دوا" class="btn btn-success w-100" />
+    </form>
+    <form action="{% url 'main:show_specific' 'sld' %}" method="get">
+      <input type="hidden" name="data" value="{{ selected_bgt.name }}&&{{ selected_bgt.company }}" />
+      <input type="submit" value="فروش های این دوا" class="btn btn-success w-100" />
+    </form>
+  {% endif %}
+  <form action="{% url 'main:sldqr' %}">
+  <input type="submit" class="btn btn-primary w-100" value="فروش دوای دیگر">
+  </form>
+  <form action="{% url 'main:show_list' 'sld' %}">
+  <input type="submit" class="btn btn-primary w-100" value="لیست فروشات">
+  </form>
+</div>
+{% endblock %}

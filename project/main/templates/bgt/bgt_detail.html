@@ -1,0 +1,71 @@
+{% extends "main__/base.html" %}
+{% load static %}
+{% block head %}
+{% endblock %}
+{% block content %}
+    <div class="container flex-column text-center" >
+        <span><p style="border-right: 6px solid #0ac33e;border-left: 6px solid #0ac33e;background-color: #007bff;color: white;width: 50%;margin: auto">جزئیات خرید</p></span>
+        <label style="border-left: 6px solid #0ac33e;border-right: 6px solid #0ac33e;background-color:#007bff;color: white; width: 50%" >
+            {{ bgt.name }}
+        </label>
+    </div>
+    <br>
+    <div class="container d-flex justify-content-center">
+        
+        <div  style="width: 70%; margin-right:25% ;direction: rtl">
+            <label>
+                شرکت دارو:
+            </label>
+            {{ bgt.company }}
+            <br>
+            <label>
+                مقدار دارو:
+            </label>
+            {{ bgt.amount }}
+            <br>
+            قیمت خرید:
+            <span> {{ bgt.price }} </span>
+            <span id="price_lbl"> {{ bgt.currency }} </span>
+            <br>
+            <label>
+                تاریخ خرید:
+            </label>
+            {{ bgt.date }}
+            <br>
+            <label>
+                بیل نمبر:
+            </label>
+            {{ bgt.bgt_bill }}
+            <br>
+
+            <label>
+                مجموع:
+            </label>
+            {{ bgt.total }}
+            <br>
+            <div>
+                <a class="btn btn-success w-50 mb-1" href="{{ bgt.drug.get_absolute_url }}"> جزئیات دارو</a>
+                <br>
+                <a class="btn btn-success w-50 mb-0"
+                                       href="{% url 'main:edit_bgt' bgt.name bgt.company bgt.date %}">ویرایش نمودن</a>
+            </div>
+            <div>
+                <form class="m-1" method="get" action="{% url 'main:show_specific' 'bgt' %}">
+                    <input type="hidden" value="{{ bgt.name }}&&{{ bgt.company }}" name="data">
+                    <span><input class="btn btn-success w-50 mb-0 " type="submit" value="خرید ها"></span>
+                </form>
+                <form  class="m-1" method="get" action="{% url 'main:show_specific' 'sld' %}">
+                    <input type="hidden" value="{{ bgt.name }}&&{{ bgt.company }}" name="data">
+                    <span><input class="btn btn-success w-50 mb-0 " type="submit" value="فروشات"></span>
+                </form>
+                <form class="m-1" method="post" action="{% url 'main:delete_bgt' bgt.name bgt.company bgt.date %}">
+                    <input class="btn btn-danger w-50 mb-0" type="submit" value="حذف خرید">
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+        <div style="margin-left: 25%">
+            <img src="{{ drug.photo.url }}" alt="No found" class="img-thumbnail w-100 h-100 m-auto">
+        </div>
+    </div>
+{% endblock %}

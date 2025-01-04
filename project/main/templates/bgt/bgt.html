@@ -1,0 +1,257 @@
+{% extends 'main__/base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/bgt/bgt.css' %}">
+{% endblock %}
+
+{% block title %}خرید{% endblock %}
+{% block js_block %}
+    <script>
+        document.addEventListener("DOMContentLoaded",(e)=>{
+            function total(){
+                var total = document.getElementById('id_total');
+                var pricee = document.getElementById('id_price');
+                var amount = document.getElementById('id_amount');
+                total.value = Number(pricee.value) * Number(amount.value);  
+            }
+            document.getElementById('id_price').addEventListener('keyup',total);
+            document.getElementById('id_amount').addEventListener('keyup',total);
+
+            // filling drugname selector
+            var name_selector = document.getElementById('id_name')
+            name_selector.innerHTML =
+                `
+                <option>انتخاب دارو</option>`
+                name_selector.innerHTML += `
+                {% for drug in drugs %}
+                    <option class="selector_option">
+                        {{ drug }}
+                    </option>
+                {% endfor %}
+                `
+            // filling company selector
+            var company_selector = document.getElementById("id_company")
+            name_selector.addEventListener('change', function (e) {
+                company_selector.innerHTML = `
+                <option>انتخاب شرکت</option>`
+                const drugName = e.target.value
+                const get_cmp_url = "{% url 'main:get_companies' %}"
+                fetch(get_cmp_url + "?drug_name=" + drugName).
+                    then(response => response.json()).
+                        then(list => list.forEach(company =>
+                        {
+                            function formatter(html, ...args) {
+                                return html.reduce((acc, curr, i) => acc + args[i - 1] + curr);
+                        }
+                            company_selector.innerHTML += formatter`
+                            <option>
+                                ${company}
+                            </option>
+                            `
+                    })
+                )
+            })
+
+            // new_drug button
+            function new_drug() {
+                document.querySelector(".name").innerHTML = `
+                <label id="name_label">
+                    نام دارو:
+                </label>
+                <br>
+                <input type="text" id="id_name" name="name">
+                `
+                document.querySelector(".company").innerHTML = `
+                <label>
+                    شرکت دارو:
+                </label>
+                <input type="text" id="id_company" name="company">
+                `
+                document.getElementById("new_drug").remove()
+                document.getElementById("img-preview").src = "{% static 'UsedPhoto/BedonAks.jpg' %}"
+            }
+
+            document.getElementById("new_drug").onclick = new_drug
+
+            // making an image preview
+            var img_preview = document.getElementById("img-preview")
+            var file_input = document.getElementById("id_photo")
+
+            // when drug exists before
+            company_selector.addEventListener("change", function (e) {
+                var new_drug = document.getElementById("new_drug")
+                const company = e.target.value
+                const drug_name = name_selector.value
+                var url = "{% url "main:set_sld_photo" %}"
+                    fetch(url+"?name="+drug_name
+                        +"&company="+company).
+                        then(url=> url.text()).
+                        then(photo_url =>{
+                            img_preview.src = photo_url
+                    })
+            })
+            // when new drug is being added 
+            file_input.addEventListener('change', function () {
+                // Check if a file is selected
+                if (file_input.files && file_input.files[0]) {
+                    // Create a FileReader object
+                    const reader = new FileReader();
+                    // Set a callback function to execute when the image is loaded
+                    reader.onload = function (e) {
+                        // Set the image source to the loaded data
+                        img_preview.src = e.target.result;
+                    };
+
+                    // Read the selected file as a URL
+                    reader.readAsDataURL(file_input.files[0]);
+                    x = reader.readAsDataURL(file_input.files[0])
+                }
+            });
+
+            // showing errors
+            {% if errors %}
+                var company = document.getElementById('id_company')
+                var name = document.getElementById('id_name')
+                name.value = "{{ form.name.value }}"
+                company.innerHTML = `
+                <option>{{ form.company.value }}</option>`
+                // sending a programmatic event to set the photo
+                name.dispatchEvent(new Event("change"))
+                var date = document.getElementById('id_date')
+                date.value = `{{ form.date.value }}`
+                var photo = document.getElementById("id_photo")
+                photo.src = "{% static 'UsedPhoto/BedonAks.jpg' %}"
+            {% endif %}
+        })
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="non-photo">
+        <h1 id="buy_title">{% if not edit %}خرید دارو{% else %}ویرایش خرید{% endif %}</h1>
+        {% if edit %}
+            <form id="forma" enctype="multipart/form-data" method="post"   action="{% url 'main:edit_bgt' instance.name instance.company instance.date %}">
+        {% else %}
+            <form id="forma" enctype="multipart/form-data" method="post" action="{% url 'main:bgt' %}">
+        {% endif %}
+
+        <div id="buy_form_fields">
+            <div class="pair">
+                <div id="label_input" class="name">
+                    <label id="name_label">
+                        نام دارو:
+                    </label>
+                    {% if not edit %}
+                        <button type="button"  id="new_drug">+
+                        </button>
+                    {% endif %}
+                    {% if edit %}
+                        {{ form.name }}
+                    {% else %}
+                        <select id="id_name" name="name" class="selectors">
+                            <option>انتخاب دارو</option>
+                        </select>
+                    {% endif %}
+
+                </div>
+
+                <div id="label_input" class="company">
+                    <label>
+                        شرکت دارو:
+                    </label>
+                    {% if edit %}
+                        {{ form.company }}
+                    {% else %}
+                        <select id="id_company" name="company" class="selectors">
+                            <option>انتخاب شرکت</option>
+                        </select>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="pair">
+                <div id="label_input">
+                    <label>
+                        مقدار دارو:
+                    </label>
+                    {{ form.amount }}
+                </div>
+                <div id="label_input">
+                    <label>
+                        قیمت خرید:
+                    </label>
+                    {{ form.price }}
+                </div>
+            </div>
+            <div class="pair">
+                <div id="label_input">
+                    <label>
+                        تاریخ خرید:
+                    </label>
+                    {{ form.date }}
+                    <script src="{% static 'js/jdatepicker.js' %}">
+                        jDatePicker("id_date")
+                    </script>
+                </div>
+                <div id="label_input">
+                    <label>
+                        بیل نمبر:
+                    </label>
+                    {{ form.bgt_bill }}
+                </div>
+            </div>
+            <div class="pair">
+                <div id="label_input">
+                    <label>
+                        تاریخ انقضاء به ماه:
+                    </label>
+                    {{form.expire_months}}
+                </div>
+                <div id="label_input">
+                    <label>
+                        مجموع:
+                    </label>
+                    {{ form.total }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="{%if errors%}photo_2{%else%}photo{%endif%}">
+        {% if errors %}
+            <ul id="errors">
+                خطا!
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% csrf_token %}
+
+        {% if edit %}
+            <img id="img-preview" class="img img-responsive img-thumbnail" src="{{ instance.drug.photo.url }}">
+        {% else %}
+            <img id="img-preview" class="img img-responsive img-thumbnail" src="{% static 'UsedPhoto/BedonAks.jpg' %}">
+        {% endif %}
+
+        <div id="photo_">
+            <label>
+                عکس دارو:
+            </label>
+            {% if not edit %}
+                {{ form.photo }}
+            {% else %}
+                <input type="file" name="photo" accept="image/*" id="id_photo">
+            {% endif %}
+        </div>
+
+        {% if edit %}
+            <input type="hidden" value="{{ instance.unique }}">
+            <input id="submitt" type="submit" value="ذخیره تغییرات">
+        {% else %}
+            <input id="submitt" type="submit" value="ثبت خرید">
+        {% endif %}
+        
+        </div>
+        </form>
+    </div>
+{% endblock %}

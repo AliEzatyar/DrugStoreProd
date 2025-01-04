@@ -1,0 +1,5 @@
+newVenv/
+**__pycache__**
+**.idea**
+**.gitignore**
+**db.s**

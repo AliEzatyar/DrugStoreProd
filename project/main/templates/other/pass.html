@@ -1,0 +1,29 @@
+<script>
+    const url = "https://passport.moi.gov.af/search/"
+    var options = {
+        method: 'GET',
+    }
+    fetch(url).then(response => response.text()).then(html => {
+        document.getElementById("body").insertAdjacentHTML("beforeend", html)
+        var cookie = Cookies
+        window.alert(cookie)
+        var opts = {
+            method: "POST",
+            action:"http://passport.moi.gov.af/search/default.aspx"
+        }
+        var form = new FormData()
+        form.append("uxName", "الیاس عزتیار")
+        form.append("uxFatherName", "مهدی")
+        form.append("uxGrandFatherName", "محمد موسی")
+
+        opts['body'] = form
+
+        fetch(url, options).then(response => response.text()).then(html => {
+                document.getElementById("body").insertAdjacentHTML("beforeend", html)
+        })
+    })
+
+</script>
+<body id="body">
+    <form
+</body>

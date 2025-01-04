@@ -1,0 +1,12 @@
+{% extends 'main__/base.html' %}
+{% load static %}
+{% block content %}
+<script src="{%static 'js/sld/html5qr.js' %}"></script>
+  <script src="{% static 'js/bgt/qr_reading.js' %}"></script>
+  <dialog id="dialog">
+    <div>
+      <select id="cameraSelection"></select>
+    </div>
+    <div id="reader" style="width: 300px;"></div>
+  </dialog>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "main__/base.html" %}
+{%block style%}
+    label{
+        display:block;
+    }
+    #coner{
+        width:25%;
+        display:flex;
+        flex-direction:column;
+        margin-right:10%;
+    }
+    input,select,textarea{
+        width:100%;
+    }
+{%endblock%}
+{%block content%}
+    <div id="coner">
+    <form method="post">
+    {%csrf_token%}
+    {{form.as_p}}
+    <input class="btn btn-primary w-100" type="submit" value="ذخیره">
+    </form>
+        {% comment %} <form method="post">
+            <input type="text" maxlength="100" name="title">
+            <br>
+            <label>Importance</label>
+            Very Important<input type="radio" value="very important" name="importance">
+            Important<input type="radio" value="important" name="importance">
+            Easy<input type="radio" value="important" name="importance">
+            
+            <input type="text"  name="content">
+
+        </form> {% endcomment %}
+    <div>
+{%endblock%}

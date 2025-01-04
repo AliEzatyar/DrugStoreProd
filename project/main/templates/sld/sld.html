@@ -1,0 +1,161 @@
+{% extends 'main__/base.html' %}
+<!DOCTYPE html>
+{% load static %}
+{% block title %}{% if not edit %}فروش دوا{% else %}ویرایش فروش{% endif %}{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{%static 'css/sld/sld.css'%}">
+{% endblock %}
+{% block content %}
+{% if edit %}
+    <form dir="rtl" id='forma' enctype="multipart/form-data" method="post"
+            action="{% url 'main:edit_sld' instance.name instance.company instance.date instance.customer %}">
+{% else %}
+    <form dir="rtl" id="sell_form" method="post" enctype="multipart/form-data">
+{% endif %}
+        <div id="non-photo"> 
+            <h1 id="sell_header">{% if not edit %}فروش دوا{% else %}ویرایش فروش{% endif %}</h1>
+            <div id="sell_form_fields">
+                <div class="pair">
+                    
+                    <div id="label_input">
+                        <label>
+                            نام دارو:
+                        </label>
+                            <p style="background-color: chartreuse;padding: 10px;border: 1px solid #ccc;border-radius: 4px;">
+                                <b>{{ instance.name }}</b>
+                                <input type="hidden" name="name" value="{{instance.name}}">
+                            </p>
+                    </div>
+                    <div id="label_input">
+                        <label>
+                            شرکت دوا:
+                        </label>
+                            <input type="hidden" value="{{instance.id}}" name="bgt_id">
+                            <p style="background-color: chartreuse;padding: 10px;border: 1px solid #ccc;border-radius: 4px;">
+                                <b>{{ instance.company }}</b>
+                                <input type="hidden" name="company" value="{{instance.company}}">
+                            </p>
+                    </div>
+                </div>
+                <div class="pair">
+                    <div id="label_input">
+
+                        <label>
+                            خرید 
+                        </label>
+                            <p  style="background-color: chartreuse;padding: 10px;border: 1px solid #ccc;border-radius: 4px;">
+                                <b>PRICE--> {{instance.price|floatformat:0}} || BAQI --> {{instance.baqi_amount|floatformat:0}}</b> 
+                            </p>
+                    </div>
+                    <div id="label_input">
+
+                        <label>
+                            مقدار فروش
+                        </label>
+                        {{ form.amount }}
+                    </div>
+                </div>
+                <div class="pair">
+                    <div id="label_input">
+                        <label>
+                            قیمت فروش
+                        </label>
+                        {{ form.price }}
+                    </div>
+                    <div id="label_input">
+                        <label>
+                            اسم مشتری
+                        </label>
+                        {{ form.customer }}
+                    </div>
+
+                </div>
+
+                <div class="pair">
+                    <div id="label_input">
+                        <label>
+                            تاریخ
+                        </label>
+                        {{ form.date }}
+                    </div>
+                    <div id="label_input">
+
+                        <label>
+                            بیل نمبر
+                        </label>
+                        {{ form.sld_bill }}
+                    </div>
+
+
+                </div>
+                <div class="pair">
+                    <div id="label_input">
+
+                        <label>
+                            مجموع
+                        </label>
+                        {{ form.total }}
+                    </div>
+                    <div id="label_input">
+                    </div>
+
+                </div>
+            </div>
+                {% csrf_token %}
+        </div>
+        <div id="photo">
+                {% if errors %}
+                    <ul id="errors">
+                    خطا!
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if edit or qrcode %}
+                    <img id="img-preview" class="img img-responsive img-thumbnail"  src="{{ instance.drug.photo.url }}">
+                {% endif %}
+                {% if edit %}
+                    <input type="hidden" value="{{ instance.unique }}">
+                    <input class="submitt_edit" type="submit" value="ذخیره تغییرات">
+                {% else %}
+                    <input class="btn btn-primary w-50" type="submit" value="ثبت فروش">
+                {% endif %}
+        </div>
+    </form>
+
+<!--handling errors -->
+<script src="{% static 'js/jdatepicker.js' %}">
+    jDatePicker("id_date")
+</script>
+
+{% endblock %}
+{% block js_block %}
+<script>
+    // auto total calculating
+    function total(){
+        var total = document.getElementById('id_total');
+        var pricee = document.getElementById('id_price');
+        var amount = document.getElementById('id_amount');
+        total.value = Number(pricee.value) * Number(amount.value);  
+        }
+
+    document.getElementById('id_price').addEventListener('keyup',total);
+    document.getElementById('id_amount').addEventListener('keyup',total);
+
+    {% if errors %}
+        var company = document.getElementById('company_selector')
+        company.innerHTML = `
+        <option>{{ form.company.value }}</option>`
+        var name = document.getElementById("name_selector")
+        name.value = "{{ form.name.value }}"
+        var bgt_detail = document.getElementById('bgt_selector')
+        bgt_detail.innerHTML = `
+        <option>{{ form.bgt_detail.value }}</option>`
+        var date = document.getElementById('id_date')
+        date.value = "{{ form.date.value }}"
+        company.dispatchEvent(new Event("change"));
+    {% endif %}
+
+</script>
+{% endblock %}

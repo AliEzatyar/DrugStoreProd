@@ -1,0 +1,70 @@
+{%extends 'main__/base.html'%}
+{%load static%}
+{%block head%}
+    <link rel="stylesheet" href="{%static 'css/finance/dash.css'%}">
+    <link rel="stylesheet" href="{%static 'css/finance/notes.css'%}">
+{%endblock%}
+{%block content%}
+{%include 'finance/dash.html'%}
+<div id="sidebar-neigh">
+    <div style="flex-direction:row;display:flex;margin-bottom:10px;margin-right:5%;">
+        <div style="margin-left:5%;">
+            <a class="btn btn-success" href="{%url 'main:create_note'%}">ایجاد یادداشت</a>
+        </div>
+        <br>
+        <div>
+            <button style="display:sticky;" class="btn btn-danger" 
+                onclick="document.getElementById('select-form').submit()">حذف یادداشت</b>
+        </div>
+    </div>
+    <div>
+    <form action="{%url 'main:delete_notes'%}" method="post" id="select-form">
+        {%csrf_token%}
+        <div id="notes">
+        {% for note in notes  %}
+            <div id="whole-note">
+                <div style="flex-direction:row;display:flex;" id="title-and-thick">
+                    <input class="form-check-input" style="display:block;direction:rtl;" type="checkbox" name="note_id{{note.id}}" value="{{note.id}}">
+                    <span id="title_">{{note.title|truncatechars:20}}</span>
+                </div>
+
+                 <div id="note-content" >
+                        <p style="overflow-wrap:break-word;">{{note.content|truncatechars:150}}</p>
+                </div>
+            </div>
+        {%empty%}
+            nothing
+        {% endfor %}
+        </div>
+    </form>
+    </div>
+</div>
+    <script>
+    const ulr = "{%url 'main:main'  %}notes/";
+    var page = 1;
+    var current_y_offset = 0;
+    window.onscroll = function(){
+        if (window.pageYOffset - current_y_offset > 100){
+        page ++;
+        current_y_offset = window.pageYOffset;
+        console.log(ulr+"?page="+page   )
+        
+        fetch(ulr+page).then(response=> response.text()).then(html => {
+            console.log("---data coming in");
+            if (html ===""){
+                console.log("---nothing coming in");
+
+                return 0;
+            }
+            else {
+                console.log("---inserted")
+                document.getElementById("notes").insertAdjacentHTML('beforeend',html);
+            }}
+        )
+        }
+
+    }
+
+    </script>
+
+{%endblock%}

@@ -1,0 +1,10 @@
+{% extends 'main__/base.html' %}
+{% block title %}خروح
+{% endblock %}
+{% block content %}
+    <div class="container text-center">
+    <h2  style="text-align: center;"> شما از سیستم خارج شدید</h2>
+    <br>
+    <a class="btn btn-primary" href="{% url 'a_ccount:login_user' %}">ورود دوباره</a>
+</div>
+{% endblock %}

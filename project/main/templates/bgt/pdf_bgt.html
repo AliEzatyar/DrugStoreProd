@@ -1,0 +1,38 @@
+{% extends 'main__/base.html' %}
+{% block title %}خرید ها{% endblock %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bgt/bgt.css' %}">
+{% endblock %}
+{% block content %}
+    <h1 id="table_title">خرید ها</h1>
+    <table id="list_table">
+        <thead>
+        <tr>
+            <th ><a href="{% url 'main:show_list' 'bgt' %}?sort_by=name" >نام دارو</a></th>
+            <th><a href="{% url 'main:show_list' 'bgt' %}?sort_by=company">کمپنی دارو</a></th>
+            <th>مقدار خرید</th>
+            <th>قیمت خرید</th>
+            <th>مجموع پول</th>
+            <th>واحد پول</th>
+            <th><a href="{% url 'main:show_list' 'bgt' %}?sort_by=date">تاریخ خرید</a></th>
+            <th><a href="{% url 'main:show_list' 'bgt' %}?sort_by=bgt_bill">بیل نمبر</a></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for bgt in bgts %}
+            <tr>
+                <td><a href="{{ bgt.get_absolute_url }}">{{ bgt.name }}</a></td>
+                <td><a href="{{ bgt.get_absolute_url }}">{{ bgt.company }}</a></td>
+                <td>{{ bgt.amount|floatformat:0 }}</td>
+                <td>{{ bgt.price|floatformat:1 }}</td>
+                <td>{{ bgt.total|floatformat:1 }}</td>
+                <td>{{ bgt.currency }}</td>
+                <td>{{ bgt.date }}</td>
+                <td>{{ bgt.bgt_bill }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

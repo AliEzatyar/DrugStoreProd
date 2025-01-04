@@ -1,0 +1,41 @@
+{% if not pdf %}
+    <div dir="rtl" id="header">
+        <div id="store_name">
+            <p>
+            ادویه فروشی احمدیار
+            </p>
+        </div>
+
+        {% if request.user.is_authenticated %}
+            <div class="menu_bar">
+                <span class="menu_item"><a  href="{% url 'main:main' %}">صفحه اصلی</a></span>
+                <span class="menu_item"><a href="{% url 'main:show_list' 'bgt' %}">خرید ها</a></span>
+                <span class="menu_item"><a href="{% url 'main:show_list' 'sld' %}">فروشات</a></span>
+                <span class="menu_item"><a  href="{% url 'main:sldqr' %}"> فروش دوا </a></span>
+                {% comment %} <span id="menu_item"><a target="{%if  pax  %}_blank{% endif%}" href="{% url 'main:bgt' %}"> خرید دارو </a></span> {% endcomment %}
+                <span class="menu_item"><a  href="{%url 'main:profs'%}"> بیلانس </a></span>
+                <span class="menu_item">
+                    {%if pax%}
+                        <form  method='post' action="{%url 'main:search' pax%}" >
+                            {% csrf_token %}
+                            <input style="text-align:center"   type='text' name='term'>
+                            <input  type='submit' class='btn btn-success btn-sm' value='جستجو'>
+                        </form>
+                    {%endif%}
+                </span>
+                {% comment %} <span ><a class="btn btn-success btn-sm" href="{% url 'a_ccount:log_out' %}">خروج</a></span> {% endcomment %}
+            </div>
+        {% endif %}
+    </div>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li style="list-style-type:none;" class="{{ message.tags }}">
+            <a style="margin-left:5%;text-decoration:none;" href="#" onclick="document.querySelector('.messages').remove()" class="close">X</a>
+            
+            {{ message|safe }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endif %}

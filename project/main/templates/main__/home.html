@@ -1,0 +1,33 @@
+{% extends 'main__/base.html' %}
+{%load static%}
+{% block head %}
+    <link rel="stylesheet" href="{%static 'css/main/home.css' %}">
+{% endblock %}
+{% block js_block %}
+<script>
+        // making infinit scroll pagination
+        var url = "{% url 'main:main' %}"
+        var difference = 0
+        var page = 1
+        window.addEventListener("scroll", function (e) {
+            if (window.pageYOffset - difference > 100) {
+                difference = window.pageYOffset
+                page += 1
+                fetch(url + "?page=" + page+"&just_page=1").then(response => response.text()).then(html => {
+                    if (html === "") {
+                        return 0
+                    } else {
+                        document.getElementById("drug_list").insertAdjacentHTML("beforeend", html)
+                        console.log("inserted", html)
+                    }
+                })
+            }
+        })
+</script>
+
+{% endblock %}
+{% block content %}
+    <div id="drug_list">
+        {% include 'main__/portion_list.html' %}
+    </div>
+{% endblock %}

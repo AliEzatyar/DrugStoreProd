@@ -1,0 +1,67 @@
+{% extends "main__/base.html" %}    
+{%load main_tags%}
+
+{%load static%}
+{%block head%}
+    <link rel="stylesheet" href="{%static 'css/finance/dash.css'%}">
+{%endblock%}
+{%block style%}
+    .sezar:hover{
+        border-radius:20px;
+        background-color:#282c37;
+        zoom:120%;
+    }
+    
+{%endblock%}
+{%block content%}
+    {%include 'finance/dash.html'%}
+    <!--finance part-->
+    <div class="finance" style="width:80%;">
+    {%for y in profs%}
+            <h1 style="border-bottom:4px solid green;text-align:center;width:95%;border-radius:10px;padding:4px;margin:auto;background-color:#282c37;color:white;"> عواید سال <span style="color:white;">{{y|forloop_index:0}}<span></h1>
+
+            <div style="display:flex; padding:30px;">
+                {%for m in y|forloop_index:2|list_slice:"0,6" %}
+                
+                    <div class="sezar" style=";margin:10px;padding:10px">
+                        <div style="position:relative;height:150px;width:150px;border-radius:50%;background: conic-gradient(#282c37 {{m|forloop_index:2}}deg,#ededed 0deg);/* these three should be together*/display:flex;justify-content:center;align-items: center;">
+                            <span style="font-weight:800;font-size:25px;position:absolute;width:130px;height:130px;border-radius:50%;content:'';background:#fff;display:flex;justify-content:center;align-items: center;">
+                                AFS {{m|forloop_index:1}} 
+                            </span>
+                        </div>
+                        <div style="color:white;margin-top:4px;text-align:center;font-size:20px;padding:1px;
+                            background-color:#282c37;border-radius:10px">
+                            {{m|forloop_index:0}}
+                        </div>
+                    </div>
+                {%endfor%}
+                
+            </div>
+            <div style="display:flex; padding:30px;">
+
+                {%for m in y|forloop_index:2|list_slice:"6,12" %}
+                    {%if not is_empty%}
+                    <h1></h1>
+                    <div class="sezar" style="margin:10px;padding:10px">
+                        <div style="position:relative;height:150px;width:150px;border-radius:50%;background: conic-gradient(#88cccc {{m|forloop_index:2}}deg,#ededed 0deg);/* these three should be together*/display:flex;justify-content:center;align-items: center;">
+                            <span style="font-weight:800;font-size:25px;position:absolute;width:130px;height:130px;border-radius:50%;content:'';background:#fff;display:flex;justify-content:center;align-items: center;">
+                                AFS {{m|forloop_index:1}} 
+                            </span>
+                        </div>
+                        <div style="color:white;margin-top:4px;text-align:center;font-size:20px;padding:1px;background-color:#88cccc;border-radius:10px">
+                            {{m|forloop_index:0}}
+                        </div>
+                    </div>
+                    {%endif%}
+                    
+                {%endfor%}
+            </div>
+            {%empty%}
+                <h1 style="text-align:center;padding:10px">فروشات وجود ندارد</h1>
+            {%endfor%}
+        </div>
+    </div>
+    
+   
+</div>
+{%endblock%}

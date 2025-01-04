@@ -1,0 +1,54 @@
+#drug_photo {
+    top: 35%;
+    position: fixed;
+    left: 25%;
+    /*margin-right: 100px;*/
+    width: 18%;
+    height: 56%;
+    border-radius: 5px;
+    border-bottom: 15px solid #65d7ea;
+}
+
+/**/
+#name_label {
+    direction: rtl;
+    zoom: 120%;
+    right: 35%;
+    position: fixed;
+    width: 20%;
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    top: 25%;
+    border-bottom: 2px solid #3ddcb6;
+}
+
+#drug_content {
+    top: 34%;
+    position: fixed;
+    direction: rtl;
+    right: 25%;
+    zoom: 135%;
+    font-family: "2  Davat";
+    border-bottom: 10px solid #65d7ea;
+}
+
+#title{
+    position: fixed;
+    top: 10%;
+    direction: ltr;
+    font-family: "2  Davat";
+    zoom: 200%;
+    right: 40%;
+}
+.det_options form{
+    float: left;
+}
+#forms form{
+    float: right;
+}
+#forms #delete_bgt{
+    margin-right: 25%;
+}
+#forms #see_bgts input{
+    width: 130%;
+}

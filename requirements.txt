@@ -1,0 +1,15 @@
+asgiref
+uwsgi
+Django
+django-debug-toolbar
+django-jalali
+easy-thumbnails
+jalali_core
+jdatetime
+pillow
+schedule
+sqlparse
+tzdata
+psycopg2-binary
+weasyprint
+qrcode

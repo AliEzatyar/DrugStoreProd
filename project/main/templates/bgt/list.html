@@ -1,0 +1,97 @@
+{% extends 'main__/base.html' %}
+{% block title %}
+  خرید ها
+{% endblock %}
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bgt/bgt_list.css' %}" />
+{% endblock %}
+{% block domready %}
+
+{% endblock %}
+{% block content %}
+  <div style="display:flex;flex-direction: column;">
+    <div style="text-align: center; ;margin-top: 1%;margin-bottom: 1%; background-color: lightgray; ">
+      <h1 style="display:inline;" id="table_title">خرید ها</h1>
+    </div>
+    <div >
+      <form method="get" action="{% url 'main:show_list_bill' 'bgt' %}">
+        {% csrf_token %}
+        <div id="search_bill">
+          <input class="input" name="bill" type="number" placeholder="بیل را وارد کنید" />
+          <input class="btn btn-success " type="submit" value="جستجو " />
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="container">
+    <table id="list_table">
+      <thead>
+        <tr>
+          <th>
+            <a id="name" href="{% url 'main:show_list' 'bgt' %}?sort_by=name" data-action="name">نام دارو</a>
+          </th>
+          <th>
+            <a id="company" href="{% url 'main:show_list' 'bgt' %}?sort_by=company" data-action="company">کمپنی دارو</a>
+          </th>
+          <th>مقدار خرید</th>
+          <th>قیمت خرید</th>
+          <th>مجموع پول</th>
+          <th>
+            <a id="date" href="{% url 'main:show_list' 'bgt' %}?sort_by=date" data-action="date">تاریخ خرید</a>
+          </th>
+          <th>انقضاء</th>
+
+          <th>
+            <a id="bill" href="{% url 'main:show_list' 'bgt' %}?sort_by=bill" data-action="bill">بیل نمبر</a>
+          </th>
+          <th>تعداد باقی</th>
+          <th>حذف کردن</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bgt in bgts %}
+          <tr class="selectable" data-amount="{{ bgt.amount }}" data-name="{{ bgt.name }}" data-id="{{ bgt.id }}">
+            <td>
+              <a href="{{ bgt.get_absolute_url }}">{{ bgt.name }}</a>
+            </td>
+            <td>
+              <a href="{{ bgt.get_absolute_url }}">{{ bgt.company }}</a>
+            </td>
+            <td>{{ bgt.amount|floatformat:0 }}</td>
+            <td>{{ bgt.price|floatformat:0 }}</td>
+            <td>{{ bgt.total|floatformat:0 }}</td>
+            <td>{{ bgt.date }}</td>
+            <td style="color:red">{{ bgt.expire_months }} ماه</td>
+
+            <td>{{ bgt.bgt_bill }}</td>
+            <td id="baqi_amount">
+              <form method="get" action="{% url 'main:show_specific' 'sld' %}">
+                <input type="hidden" value="{{ bgt.name }}&&{{ bgt.company }}" name="data" />
+                <input class="btn btn-success w-50"  type="submit" value="{{ bgt.baqi_amount|floatformat:0 }}/{{ bgt.amount|floatformat:0 }}" />
+              </form>
+            </td>
+            <td>
+              <dialog id="del{{ bgt.name }}">
+                <form method="post" action="{% url 'main:delete_bgt' bgt.name bgt.company bgt.date %}">
+                  <h1 class="text text-success">آیا مایل به حذف هستین؟</h1>
+                  <input type="button" class="btn btn-primary" value="کنسل" onclick="document.getElementById('del{{ bgt.name }}').remove()" />
+                  <input class="btn btn-danger w-50" type="submit" value="حذف" />
+                  {% csrf_token %}
+                </form>
+              </dialog>
+              <button type="button" class="btn btn-danger w-50" onclick="document.getElementById('del{{ bgt.name }}').showModal()">حذف</button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <ul id="contextMenu">
+    <li id="generateQRS">Generate QR Cdoe</li>
+    <li id="deleteAll">Delete All</li>
+  </ul>
+  <script src="{% static 'js/bgt/qrcode_generator.js' %}"></script>
+
+  <script src="{% static 'js/bgt/select_ctrl.js' %}"></script>
+{% endblock %}

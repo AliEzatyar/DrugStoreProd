@@ -1,0 +1,31 @@
+{% load static %}
+{% load thumbnail %}
+{% load main_tags %}
+
+{% for drug in page %}
+    <div class="drug-container">
+        <a href="{{ drug.get_absolute_url }}">
+            {% thumbnail drug.photo 300x400 crop="smart" quality=100 as img %}
+            {% if img %}
+                <img class="drug-image" src="{{ img.url }}" alt="{{ drug.name }}">
+            {% else %}
+                <img class="drug-image" src="{% static 'UsedPhoto/BedonAks.jpg' %}" alt="No Photo">
+            {% endif %}
+        </a>
+        <div class="drug-details">
+            
+            <h3>{{ drug.name }}</h3>
+            <p>شرکت: {{ drug.company }}</p>
+            <p style="background-color: #e6f7ff; padding: 5px; border-radius: 5px;">تعداد موجود: <b><span style="background-color:red;color:white; width:100%;border-radius:50%;font-size:17px ;margin-right:50%;padding:2%;zoom:120%">-{{ drug.existing_amount|floatformat:0 }}-</span></b></`p>
+            
+            {%last_bgt drug.name drug.company as last_bg %}
+            {%if last_bg%}
+                <p>آخرین خرید: <a href="{{ last_bg.get_absolute_url }}">{{ last_bg.date }}</a></p>
+            {%endif%}
+            {%last_sld drug.name drug.company as last_sl %}
+            {% comment %} {%if last_sl%}
+                <p>آخرین فروش: <a href="{{ last_sl.get_absolute_url }}">{{ last_sl.date }}</a></p>
+            {%endif%} {% endcomment %}
+            </div>
+    </div>
+{% endfor %}

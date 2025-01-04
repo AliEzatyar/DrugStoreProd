@@ -1,0 +1,48 @@
+{% extends "main__/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container flex-column text-center">
+        <span><p style="border-right: 6px solid #0ac33e;border-left: 6px solid #0ac33e;background-color: #007bff;color: white;width: 50%;margin: auto">جزئیات دوا</p></span>
+        <label style="border-left: 6px solid #0ac33e;border-right: 6px solid #0ac33e;background-color:#007bff;color: white; width: 50%" >
+            {{ drug.name}}
+        </label>
+    </div>
+    <br>
+    <div class="container d-flex justify-content-center">
+        
+        <div id="drug_content" style="width: 70%; margin-right:25% ;direction: rtl" class="mt-5">
+            <label>
+                شرکت دارو:
+            </label>
+            {{ drug.company }}
+            <br>
+            <label>
+                مقدار موجود:
+            </label>
+            {{ drug.existing_amount|floatformat:1 }}
+            <br>
+            
+            <div id="forms">
+                <form  method="get" action="{% url 'main:show_specific' 'bgt' %}">
+                    <input type="hidden" value="{{ drug.name }}&&{{ drug.company }}" name="data">
+                    <span><input class="btn btn-success w-50 " type="submit" value="خرید ها"></span>
+                </form>
+                <form  method="get" action="{% url 'main:show_specific' 'sld' %}">
+                    <input type="hidden" value="{{ drug.name }}&&{{ drug.company }}" name="data">
+                    <span><input class="btn btn-success w-50 " type="submit" value="فروشات"></span>
+                </form>
+                <form id="delete_bgt" method="post" action="{% url 'main:delete_drug' drug.name drug.company %}">
+                    <input class="btn btn-danger w-50" type="submit" value="حذف دوا">
+                    {% csrf_token %}
+                </form>
+            </div>
+           <h5> شرح دوا:</h5>   
+            <span  style="overflow-wrap:break-word;" > {{ drug.description|truncatechars:100 }} </span>
+            <span id="price_lbl" > {{ bgt.currency }} </span>
+
+        </div>
+        <div style="margin-left: 25%">
+            <img src="{{ drug.photo.url }}" alt="No found" class="img-thumbnail w-100 h-100 m-auto">
+        </div>
+    </div>
+{% endblock %}

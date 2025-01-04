@@ -1,0 +1,159 @@
+/* Persian Font */
+@font-face {
+    font-family: "gool";
+    src: url("project/main/static/fonts/lotus.ttf");
+}
+
+* {
+    font-family: "gool";
+    direction: rtl;
+}
+
+
+
+/* General Styles */
+#header {
+    background-color: #333;
+    color: #fff;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #555;
+}
+
+#store_name {
+    width: 30%;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    margin-right: 2%;
+}
+
+.menu_bar {
+    display: flex;
+    justify-content: center;
+    gap: 1px;
+    width: 100%;
+}
+
+.menu_item a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.menu_item a:hover {
+    background-color: #555;
+}
+
+#welcm {
+    text-align: right;
+    color: #ccc;
+    margin-left: 1%;
+    margin-top: 0;
+}
+
+.diff {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.diff span {
+    font-size: 14px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    display: inline-block;
+    margin: 3px;
+}
+
+#delete_form input {
+    width: 100%;
+    height: 100%;
+}
+
+.success {
+    background-color: cyan;
+    height: 5%;
+}
+
+/* Responsive Styles */
+@media (max-width: 767px) {
+    #header {
+        flex-direction: column;
+        padding: 10px;
+        height: auto;
+    }
+
+    #store_name {
+        font-size: 18px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .menu_bar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .menu_item {
+        margin-top: 1%;
+    }
+
+    .logout {
+        padding-top: 1%;
+    }
+
+    .menu_item a {
+        font-size: 14px;
+        padding: 3px 4px;
+    }
+
+    #welcm {
+        text-align: center;
+        margin-top: 10px;
+        color: #ccc;
+    }
+
+    .diff {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .diff span {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 768px) {
+    #header {
+        height: 15vh;
+    }
+
+    .menu_bar {
+        
+        gap: 10px;
+    }
+
+    #welcm {
+        margin-left: 2%;
+    }
+
+    .diff {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .diff span {
+        font-size: 14px;
+    }
+}

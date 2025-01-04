@@ -1,0 +1,100 @@
+{% extends 'main__/base.html' %}
+{% load static %}
+{% block title %}فروشات{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sld/sld_list.css' %}">
+{% endblock %}
+{% block content %}
+    <div style="display:flex;flex-direction: column;">
+    <div style="text-align: center; ;margin-top: 1%;margin-bottom: 1%; background-color: lightgray; ">
+      <h1 style="display:inline;" id="table_title">فروشات</h1>
+    </div>
+    <div >
+      <form method="get" action="{% url 'main:show_list_bill' 'sld' %}">
+        {% csrf_token %}
+        <div id="search_bill">
+          <input class="input" name="bill" type="number" placeholder="بیل را وارد کنید" />
+          <input class="btn btn-success " type="submit" value="جستجو " />
+        </div>
+      </form>
+    </div>
+  </div>
+    <div>
+        <table id="list_table">
+            <thead>
+            <tr>
+                <th >
+                    <a href="{% url 'main:show_list' 'sld' %}?sort_by=name" data-action="name">
+                        نام دارو
+                    </a>
+                </th>
+                <th>
+                    <a id="company" href="{% url 'main:show_list' 'sld' %}?sort_by=company" data-action="company">
+                        کمپنی دارو
+                    </a>
+                </th>
+                <th>مقدار فروش</th>
+                <th>قیمت فروش</th>
+                <th>مجموع پول</th>
+                <th>واحد پول</th>
+                <th>مشخصات خرید</th>
+                <th>سود</th>
+                <th>خریدار</th>
+                <th>
+                    <a id="date" href="{% url 'main:show_list' 'sld' %}?sort_by=date" data-action="date">
+                        تاریخ فروش
+                    </a>
+                </th>
+
+                <th>
+                <a id="bill" href="{% url 'main:show_list' 'sld' %}?sort_by=bill" data-action="bill" >
+                    بیل نمبر
+                </a>
+            </th>
+                <th>حذف کردن</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sld in slds %}
+                <tr>
+                    <td><a href="{{ sld.get_absolute_url }}">{{ sld.name }}</a></td>
+                    <td><a href="{{ sld.get_absolute_url }}">{{ sld.company }}</a></td>
+                    <td>{{ sld.amount|floatformat:0 }}</td>
+                    <td>{{ sld.price }}</td>
+                    <td>{{ sld.total }}</td>
+                    <td>{{ sld.currency }}</td>
+                    <td style="background-color: lightgoldenrodyellow">
+                        <a href="{% url 'main:show_bgt_detail' sld.bgt.name sld.bgt.company sld.bgt.date %}">
+                            {{ sld.bgt }}
+                        </a>
+                    </td>
+                    {% if sld.profite < 0 %}
+                        <td style="background-color: red;color: white;border:2px dashed white">{{ sld.profite }}</td>
+                    {% else %}
+                        <td>{{ sld.profite }}</td>
+                    {% endif %}
+                    <td>{{ sld.customer }}</td>
+                    <td>{{ sld.date }}</td>
+                    <td>{{ sld.sld_bill }}</td>
+                    <td>
+                        <dialog id="del{{sld.name}}">
+                            <form style="width:100%;margin:auto"  method="post" action="{% url 'main:delete_sld' sld.name sld.company sld.date sld.customer %}">
+                                <h1 class="text text-success">{{sld.name}}---------آیا مایل به پاک کردن هستی؟</h1>
+
+                                <input class="btn btn-success w-25"  type="button"  value="کنسل" onclick="document.getElementById('del{{sld.name}}').remove()">   
+                                <input class="btn btn-danger w-25" type="submit" value="حذف">
+                                    {% csrf_token %}
+                            </form>
+                        </dialog>
+                        <button type="button"  class="btn btn-danger" onclick="document.getElementById('del{{sld.name}}').showModal()">حذف</button>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+   
+{% endblock %}
+
+
