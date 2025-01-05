@@ -107,10 +107,8 @@
                 {% if errors %}
                     <ul id="errors">
                     خطا!
-                    {% for error in errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                    </ul>
+                        {{errors}}
+                </ul>
                 {% endif %}
                 {% if edit or qrcode %}
                     <img id="img-preview" class="img img-responsive img-thumbnail"  src="{{ instance.drug.photo.url }}">

@@ -1,5 +1,6 @@
 from io import BytesIO
 import datetime
+import logging
 import weasyprint
 from django.conf import settings
 from django.contrib import messages
@@ -19,8 +20,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST
 from .accessories import resize
-from main.forms import BgtForm, SldForm, BgtEditForm, SldEdit, DrugEditForm
-from main.models import Drug as Drg, Bgt, Note, Sld, BillSld, BillBgt
+from main.forms import BgtForm, LoanForm, SldForm, BgtEditForm, SldEdit, DrugEditForm
+from main.models import Drug as Drg, Bgt, Loan, Note, Sld, BillSld, BillBgt
 from main.models import Bgt as Bg
 from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib.auth.decorators import permission_required
@@ -168,7 +169,6 @@ def buy(request):
                 bgt.drug = drug
                 bgt.save()
             existing_bill = BillBgt.objects.filter(number=bgt.bgt_bill)
-            print("this was the existing bill", existing_bill)
             # setting the appropriate bill number for the sell object
             new_bill = None
             if len(existing_bill) > 0:
@@ -184,7 +184,6 @@ def buy(request):
             # sending
             # check if there are previous bill not sent by email
             not_sent = BillBgt.objects.filter(sent=False)
-            print(not_sent)
             for bill in not_sent:
                 # discarding current item being added from being sent
                 if (
@@ -192,7 +191,6 @@ def buy(request):
                 ) or (new_bill and new_bill.number == bill.number):
                     continue
                 send_bgt_pdf_email(bill)
-                print("bill was not sent")
                 bill.sent = True
                 bill.save()
             messages.success(request, "جزئیات خرید موفقانه ثبت گردید.")
@@ -208,9 +206,6 @@ def buy(request):
                 },
             )
         else:
-            errors = form.error_class.as_text(form.errors).split("\n")[
-                1:
-            ]  # taking out erros
             messages.error(request, "خطا در ثبت معلومات!")
             return render(
                 request,
@@ -222,7 +217,7 @@ def buy(request):
                     "drugs": drugs,
                     "edit": None,
                     "media_url": media_url,
-                    "errors": errors,
+                    "errors": form.errors,
                 },
             )
     else:
@@ -305,10 +300,9 @@ def sell(request, id):
 
             except Exception as e:
                 drugs = [drug.name for drug in Drg.objects.all()]
-                errors = form.error_class.as_text(form.errors).split("\n")[
-                    1:
-                ]  # taking out erros
-                messages.error(request, "خطا در ثبت معلومات!")
+                messages.error(request, "خطا در ثب----ت معلومات!")
+                logObjec = logging.getLogger("print_logger")
+                logObjec.info(str(form.errors)+"----------++++++_______")
                 return render(
                     request,
                     "sld/sld.html",
@@ -318,13 +312,12 @@ def sell(request, id):
                         "form": form,
                         "instance": selected_bgt,
                         "media_url": media_url,
-                        "errors": e.args,
+                        "errors": form.errors,
                     },
                 )
 
             # bill management
             existing_bill = BillSld.objects.filter(number=sld_obj.sld_bill)
-            print("this was the existing bill", existing_bill)
             # setting the appropriate bill number for the sell object
             new_bill = None
             if len(existing_bill) > 0:
@@ -372,6 +365,8 @@ def sell(request, id):
             errors = form.errors
             # errors = form.error_class.as_text(form.errors).split("\n")[1:]  # taking out erros
             messages.error(request, "خطا در ثبت معلومات!")
+            logObjec = logging.getLogger("print_logger")
+            logObjec.info(str(form.errors)+"----------++++++_______")
             return render(
                 request,
                 "sld/sld.html",
@@ -790,6 +785,49 @@ class UpdateNote(LoginRequiredMixin, UpdateView, PermissionRequiredMixin):
     success_url = reverse_lazy("main:notes_list_all")
     template_name = "finance/create_edit_note.html"
 
+@permission_required("main.purchase-perm")
+@login_required
+def manage_loan(request,id=None):
+    """this view handles deletion and creation of a load"""
+    instance = Loan.objects.filter(id=id).first() if id else None 
+    if request.method == "GET":
+        form = LoanForm()
+        edit=False
+        if instance:
+            form = LoanForm(instance=instance)
+            edit=True
+        return render(request, "loan/create_loan.html",{'form':form,"edit":edit,"instance":instance})
+    else:
+        form = LoanForm(data=request.POST,files=request.FILES)
+        if instance:
+            form = LoanForm(data=request.POST,instance=instance,files=request.FILES)
+            
+        if form.is_valid():
+            cd = form.cleaned_data
+            # duplicate prevention
+            check = Loan.objects.filter(client_name=cd["client_name"],
+                                date=cd["date"],
+                                amount=cd["amount"],
+                                ).exists()
+                            
+            if not check:
+                obj = form.save(commit=False)
+                if instance:
+                    obj.client_id = instance.client_id
+                else:
+                    # a new is being created, so taking files from FILES attribute of requestszzzzzz
+                    obj.client_id= request.FILES["client_id"]
+                obj.save()
+                
+            return redirect("main:list_loans")
+        else:
+            return render(request, "loan/create_loan.html", {"form": form,"errors":form.errors})
+
+
+@login_required
+def list_loans(request):
+    loans = Loan.objects.all()
+    return render(request,"loan/list.html",{'loans':loans})
 
 @permission_required("main.purchase-perm", raise_exception=True)
 @login_required

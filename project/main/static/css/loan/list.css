@@ -1,0 +1,72 @@
+/* Table Responsive Wrapper */
+.table-responsive {
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on touch devices */
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/* Table Header Background Color */
+.table-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Adjust font size and padding on smaller screens */
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+        /* Hide the table header for smaller screens */
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        font-size: 14px;
+    }
+
+    .table tbody td:before {
+        content: attr(data-label);
+        /* Use `data-label` attribute for labels */
+        font-weight: bold;
+        text-align: left;
+        flex-basis: 40%;
+        padding-right: 10px;
+        color: #333;
+    }
+
+    .table tbody td a {
+        text-decoration: none;
+        color: #007bff;
+    }
+}
+
+/* Special Styles for "باقی" and "تسویه" */
+#baqi {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+#s {
+    background-color: green;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}

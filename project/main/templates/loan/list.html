@@ -1,0 +1,38 @@
+{% extends "finance/public_dash.html" %}    
+{%load main_tags%}
+{%load static%}
+{%block meta%}
+{%endblock%}
+{%block dash_title%}
+  لیست حقداری بالای مشتریان
+{%endblock%}
+{%block dash_content%}
+    <div class="container mt-1">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>نام مشتری</th>
+                    <th>فوتوکاپی تذکره</th>
+                    <th>آدرس</th>
+                    <th>مقدار قرض</th>
+                    <th>تاریخ</th>
+                    <th>باقی؟</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                    <tr>
+                        <td><a href="{%url 'main:update_loan' loan.id%}">{{ loan.client_name }}</td>
+                        <td><a style="text-decoration: none;" href="{{ loan.client_id.url }}">دانلود فایل</a></td>
+                        <td>{{ loan.address }}</td>
+                        <td>{{ loan.amount }}</td>
+                        <td>{{ loan.date }}</td>
+                        {%with loan.baqi as res  %}
+                        <td id="{%if res%}baqi{%else%}s{%endif%}">{% if res %} باقی {% else %} تسویه {% endif %}</td>
+                        {%endwith%}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%endblock%}

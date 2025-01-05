@@ -1,0 +1,114 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+}
+
+/* Container for Header and Main Content */
+.container {
+    margin-right: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.header {
+    margin-top: 1%;
+    color: black;
+    padding: 10px 20px;
+    text-align: center;
+    flex-shrink: 0;
+    /* Prevent shrinking */
+    position: sticky;
+    /* Keep header at the top */
+    top: 0;
+    z-index: 100;
+}
+
+/* Main Content Area */
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* Take remaining space below the header */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Content Section */
+.content {
+    margin-right: 10%;
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 100px;
+    background-color: #333;
+    color: white;
+    position: absolute;
+    /* Position sidebar relative to .main */
+    top: 0;
+    /* Aligns sidebar with the top of .main */
+    right: 0;
+    /* Places the sidebar on the right */
+    height: 100%;
+    /* Extend to full height of .main */
+
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+    /* Show sidebar when open */
+}
+
+/* Sidebar Navigation */
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav ul li {
+    padding: 15px;
+    text-align: center;
+}
+
+.sidebar nav ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #555;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    .container {
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    .content {
+        margin-right: 0;
+
+    }
+
+    .sidebar {
+        transform: translateX(100%);
+        /* Hide sidebar initially */
+        transition: transform 0.3s ease-in-out;
+        width: 30%;
+        /* Adjust sidebar width for smaller screens */
+    }
+}

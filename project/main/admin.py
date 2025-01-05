@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Permission
 # Register your models here.
 from a_ccount.models import Prof
-from main.models import Drug, Bgt, Sld, BillSld, BillBgt
+from main.models import Drug, Bgt, Loan, Sld, BillSld, BillBgt
 
 
 @admin.register(Bgt)
@@ -32,3 +32,4 @@ class DrugAdmin(admin.ModelAdmin):
 admin.site.register(BillSld)
 admin.site.register(BillBgt)
 admin.site.register(Permission)
+admin.site.register(Loan)

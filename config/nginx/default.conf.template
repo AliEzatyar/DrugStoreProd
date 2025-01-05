@@ -13,7 +13,7 @@ server{
     listen 443 ssl;
     ssl_certificate /code/certificate.crt;
     ssl_certificate_key /code/private.key;
-    server_name 192.168.216.196;
+    server_name 192.168.96.196;
     error_log stderr warn;
     access_log /dev/stdout main;
 

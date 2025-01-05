@@ -1,0 +1,95 @@
+{% extends 'main__/base.html' %}
+{% load static %}
+{% block head %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static 'css/finance/public_dash.css' %}" />
+  {% block meta %}
+
+  {% endblock %}
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="main">
+      <h1 class="header">
+        {% block dash_title %}
+
+        {% endblock %}
+      </h1>
+      <div class="content">
+        {% block dash_content %}
+
+        {% endblock %}
+      </div>
+      <div id="sidebar" class="sidebar">
+        <nav>
+          <ul >
+            <li>
+            </li>
+            <li>
+            </li>
+            <li>
+            </li>
+            <li>
+              <a href="{% url 'main:profs' %}">
+                <span>بیلانس</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main:list_loans' %}">
+                <span>حقداری بالای مشتریان</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main:notes_list_all' %}">
+                <i class="none"></i>
+                <span>یادداشت ها</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    const sidebar = document.getElementById('sidebar')
+    let startX = 0
+    let isDragging = false
+    
+    // Detect the start of a drag
+    document.body.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX // Record the starting touch position
+      isDragging = true
+    })
+    
+    // Detect drag motion
+    document.body.addEventListener('touchmove', (e) => {
+      if (!isDragging) return
+    
+      const currentX = e.touches[0].clientX
+    
+      // Calculate drag distance
+      const dragDistance = startX - currentX
+    
+      if (dragDistance > 50) {
+        // If dragged left more than 50px
+        sidebar.classList.add('open') // Open the sidebar
+      } else if (dragDistance < -50) {
+        // If dragged right more than 50px
+        sidebar.classList.remove('open') // Close the sidebar
+      }
+    })
+    
+    // Detect the end of a drag
+    document.body.addEventListener('touchend', () => {
+      isDragging = false // Stop the dragging process
+    })
+    
+    // Close the sidebar when clicking outside
+    document.body.addEventListener('click', (e) => {
+      if (!sidebar.contains(e.target) && !e.target.closest('.sidebar')) {
+        sidebar.classList.remove('open')
+      }
+    })
+  </script>
+{% endblock %}

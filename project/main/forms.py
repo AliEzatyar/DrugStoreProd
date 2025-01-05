@@ -2,8 +2,9 @@ from copy import deepcopy
 from logging import getLogger, info
 from django import forms
 from django.core.exceptions import ValidationError
-from main.models import Bgt, Drug
+from main.models import Bgt, Drug, Loan
 from main.models import Sld
+from django_jalali.forms import jDateInput
 
 
 class BgtForm(forms.ModelForm):
@@ -259,3 +260,21 @@ class SldEdit(forms.ModelForm):
         if commit:
             new_sld.save()
         return new_sld
+
+class LoanForm(forms.ModelForm):
+    class Meta:
+        model = Loan
+        exclude = ["client_id"]
+        widgets = {
+            "client_name": forms.TextInput(
+                attrs={"class": "form-control", "id": "client-name"}
+            ),
+            "address": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+            "amount": forms.NumberInput(
+                attrs={"class": "form-control", "id": "amount"}
+            ),
+            "date": jDateInput(attrs={"class": "form-control","type":"date"}),
+            "baqi": forms.CheckboxInput(
+                attrs={"class": "form-check-input", "id": "baqi"}
+            ),
+        }

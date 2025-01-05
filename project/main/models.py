@@ -131,6 +131,15 @@ class Note(models.Model):
     class Meta:
         ordering = ['importance']
 
+class Loan(models.Model):
+    client_name = models.CharField(max_length=255)
+    client_id = models.FileField(upload_to="loan/ids/")
+    address = models.TextField()
+    amount = models.IntegerField()
+    date = jmodels.jDateField(default=jmodels.timezone.now())
+    baqi = models.BooleanField(default=True,blank=True)
+    
+    
 
 @receiver(pre_save, sender=Sld)
 def before_sld_save(*args, **kwargs):

@@ -219,9 +219,7 @@
         {% if errors %}
             <ul id="errors">
                 خطا!
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
+                {{errors}}
             </ul>
         {% endif %}
 
