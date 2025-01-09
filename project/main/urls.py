@@ -10,12 +10,12 @@ urlpatterns = [
     path("search/<str:type_>", views.search, name="search"),
     path("buy", views.buy, name="bgt"),
     path("sell/<int:id>", views.sell, name="sld"),
-    path("read-qr/", views.readQR, name="sldqr"),
+    path("read-qr/", views.read_qr_sell, name="sldqr"),
     # js
     path("listAll/", views.all_drugs, name="get_all_drugs"),  # in js
     path("listBgts/", views.get_drug_bgts, name="get_bgts"),  # in js
     path("getCompanies/", views.get_drug_companies, name="get_companies"),  # in js
-    path("photo/", views.set_sld_photo, name="set_sld_photo"),
+    path("photo/", views.send_sld_photo, name="send_sld_photo"),
     # show details
     path(
         "detail/<str:name>/<str:company>/",

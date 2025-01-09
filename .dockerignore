@@ -1,5 +1,9 @@
-newVenv/
+newVenv
+VENV/
 **__pycache__**
 **.idea**
 **.gitignore**
 **db.s**
+data/
+**logging**
+**media**

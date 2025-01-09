@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     "easy_thumbnails.apps.EasyThumbnailsConfig",
-
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',

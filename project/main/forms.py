@@ -140,11 +140,7 @@ class SldForm(forms.ModelForm):
             raise ValidationError("قیمت فروش منطقی نیست")
 
         # finding the bgt object to limit exact bgt over-amount selling
-        lg = getLogger("print_logger")
-        lg.info(f"-----------------bgt0d---{cd}")
-
         bgt_obj = Bgt.objects.get(id=int(cd["bgt_id"]))
-        print("bgt fount ------------------------")
         # preventing repetition of the same sale
         sld_unique = bgt_obj.name + "&&" + str(cd['date']) + "&&" + cd['customer']
         if Sld.objects.filter(unique=sld_unique).count() > 0:

@@ -1,14 +1,10 @@
 from io import BytesIO
-import datetime
 import logging
 import weasyprint
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db import models
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from copy import deepcopy
@@ -19,12 +15,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST
-from .accessories import resize
 from main.forms import BgtForm, LoanForm, SldForm, BgtEditForm, SldEdit, DrugEditForm
-from main.models import Drug as Drg, Bgt, Loan, Note, Sld, BillSld, BillBgt
-from main.models import Bgt as Bg
+from main.models import Drug as Drg, Bgt as Bg, Loan, Note, Sld, BillSld, BillBgt
 from django.contrib.postgres.search import TrigramSimilarity
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
+from django.db.transaction import atomic
 
 # Create your views here.
 
@@ -151,36 +146,42 @@ def buy(request):
         form = BgtForm(data, request.FILES)
         if form.is_valid():
             bgt = form.save(commit=False)
+
             try:
                 drug = Drg.objects.get(unique=bgt.name + "&&" + bgt.company)
-                bgt.drug = drug
-                drug.existing_amount += bgt.amount  # though we can get it by calling
+                with atomic:
+                    bgt.drug = drug
+                    drug.existing_amount += (
+                        bgt.amount
+                    )  # though we can get it by calling
+                    bgt.save()
+                    drug.save()
 
-                bgt.save()
-                drug.save()
             except Drg.DoesNotExist:
-                drug = Drg.objects.create(
-                    name=bgt.name,
-                    company=bgt.company,
-                    photo=bgt.photo,
-                    unique=bgt.name + "&&" + bgt.company,
-                    existing_amount=bgt.amount,
-                )
-                bgt.drug = drug
-                bgt.save()
+                with atomic:
+                    drug = Drg.objects.create(
+                        name=bgt.name,
+                        company=bgt.company,
+                        photo=bgt.photo,
+                        unique=bgt.name + "&&" + bgt.company,
+                        existing_amount=bgt.amount,
+                    )
+                    bgt.drug = drug
+                    bgt.save()
             existing_bill = BillBgt.objects.filter(number=bgt.bgt_bill)
             # setting the appropriate bill number for the sell object
             new_bill = None
-            if len(existing_bill) > 0:
-                existing_bill[0].bgts.add(bgt)
-            else:
-                new_bill = BillBgt.objects.create(
-                    number=bgt.bgt_bill,
-                    company=bgt.company,
-                    date=bgt.date.strftime("%y/%m/%d"),
-                )
-                new_bill.bgts.add(bgt)
-                new_bill.save()
+            with atomic:
+                if len(existing_bill) > 0:
+                    existing_bill[0].bgts.add(bgt)
+                else:
+                    new_bill = BillBgt.objects.create(
+                        number=bgt.bgt_bill,
+                        company=bgt.company,
+                        date=bgt.date.strftime("%y/%m/%d"),
+                    )
+                    new_bill.bgts.add(bgt)
+                    new_bill.save()
             # sending
             # check if there are previous bill not sent by email
             not_sent = BillBgt.objects.filter(sent=False)
@@ -206,6 +207,7 @@ def buy(request):
                 },
             )
         else:
+            # there is an error
             messages.error(request, "خطا در ثبت معلومات!")
             return render(
                 request,
@@ -258,14 +260,14 @@ def all_drugs(request):
 @permission_required("main.sale-perm", raise_exception=True)
 def sell(request, id):
     media_url = request.build_absolute_uri("/media/drugs/")
-    selected_bgt = Bgt.objects.get(id=id)
+    selected_bgt = Bg.objects.get(id=id)
     if selected_bgt.baqi_amount < 1:
         # no drugs exists of this type
         return render(
             request,
             "sld/success.html",
-            {   
-                "selected_bgt":selected_bgt,
+            {
+                "selected_bgt": selected_bgt,
                 "no_baqi": True,
                 "pdf": None,
                 "pax": None,
@@ -283,26 +285,27 @@ def sell(request, id):
 
                 cd = form.cleaned_data
                 # finding the drug, its bgt and date| assiging bgt and drug objects to current sld
-                bgt = Bg.objects.get(id=request.POST["bgt_id"])
-                drug = Drg.objects.get(id=bgt.drug.id)
-                sld_obj.drug = drug
-                sld_obj.bgt = bgt
+                # making it atomic
+                with atomic:
+                    bgt = Bg.objects.get(id=request.POST["bgt_id"])
+                    drug = Drg.objects.get(id=bgt.drug.id)
+                    sld_obj.drug = drug
+                    sld_obj.bgt = bgt
 
-                # profite calculation
-                sld_obj.profite = (sld_obj.price - bgt.price) * sld_obj.amount
-                # bgt object remaining amount calculations,
-                drug.existing_amount -= sld_obj.amount
-                bgt.sld_amount += sld_obj.amount
-                bgt.baqi_amount -= cd["amount"]
-                bgt.save()
-                drug.save()
-                sld_obj.save()
+                    # profite calculation
+                    sld_obj.profite = (sld_obj.price - bgt.price) * sld_obj.amount
+                    # bgt object remaining amount calculations,
+                    drug.existing_amount -= sld_obj.amount
+                    bgt.sld_amount += sld_obj.amount
+                    bgt.baqi_amount -= cd["amount"]
+                    bgt.save()
+                    drug.save()
+                    sld_obj.save()
 
             except Exception as e:
-                drugs = [drug.name for drug in Drg.objects.all()]
-                messages.error(request, "خطا در ثب----ت معلومات!")
+                messages.error(request, "خطا در ثبت فروش!")
                 logObjec = logging.getLogger("print_logger")
-                logObjec.info(str(form.errors)+"----------++++++_______")
+                logObjec.info(str(form.errors))
                 return render(
                     request,
                     "sld/sld.html",
@@ -361,12 +364,11 @@ def sell(request, id):
             )
         else:
             # there are form errors
-            drugs = [drug.name for drug in Drg.objects.all()]
             errors = form.errors
             # errors = form.error_class.as_text(form.errors).split("\n")[1:]  # taking out erros
-            messages.error(request, "خطا در ثبت معلومات!")
+            messages.error(request, "خطا در ثبت فروش!")
             logObjec = logging.getLogger("print_logger")
-            logObjec.info(str(form.errors)+"----------++++++_______")
+            logObjec.error("There was an error while saving sld->", errors)
             return render(
                 request,
                 "sld/sld.html",
@@ -374,7 +376,6 @@ def sell(request, id):
                     "pdf": None,
                     "pax": None,
                     "form": form,
-                    "drugs": drugs,
                     "media_url": media_url,
                     "errors": errors,
                     "instance": selected_bgt,
@@ -420,7 +421,7 @@ def get_drug_companies(request):
 
 @login_required
 @permission_required("main.sale-perm", raise_exception=True)
-def set_sld_photo(request):
+def send_sld_photo(request):
     data = request.GET
     name = data["name"]
     company = data["company"]
@@ -445,7 +446,7 @@ def show_bgt_detail(request, name, company, date):
     name = name.title()
     company = company.title()
     unique = name + "&&" + company + "&&" + date
-    bgt = Bgt.objects.get(unique=unique)
+    bgt = Bg.objects.get(unique=unique)
     drug = Drg.objects.get(name=name, company=company)
     return render(
         request,
@@ -479,7 +480,7 @@ def edit_bgt(request, name, company, date):
     """
     data = request.POST
     pre_bgt_unique = name + "&&" + company + "&&" + date
-    pre_bgt = deepcopy(Bgt.objects.get(unique=pre_bgt_unique))
+    pre_bgt = deepcopy(Bg.objects.get(unique=pre_bgt_unique))
     pre_drug = deepcopy(pre_bgt.drug)
     if request.method == "POST":
         bgt_edit_form = BgtEditForm(
@@ -491,29 +492,52 @@ def edit_bgt(request, name, company, date):
         if bgt_edit_form.is_valid() and drug_edit_form.is_valid():
             new_bgt = bgt_edit_form.save(commit=False)
             new_drug = drug_edit_form.save(commit=False)
-            new_drug.existing_amount = (
-                pre_drug.existing_amount - pre_bgt.amount + new_bgt.amount
-            )
-            new_bgt.baqi_amount += new_bgt.amount - pre_bgt.amount
-            new_drug.save()
-            new_bgt.drug = new_drug
-            new_bgt.save()
-            messages.success(request, "تغییرات موفقانه ثبت گردید.")
+            # making it atomic
+            try:
+                with atomic:
+                    new_drug.existing_amount = (
+                        pre_drug.existing_amount - pre_bgt.amount + new_bgt.amount
+                    )
+                    new_bgt.baqi_amount += new_bgt.amount - pre_bgt.amount
+                    new_drug.save()
+                    new_bgt.drug = new_drug
+                    new_bgt.save()
+                messages.success(request, "تغییرات موفقانه ثبت گردید.")
+            except Exception as e:
+                logger = logging.getLogger('print_logger')
+                logger.error("There was an error editing bgt:"+str(e))
+                return render(
+                    request,
+                    "bgt/bgt.html",
+                    {
+                        "form": bgt_edit_form,
+                        "edit": "1",
+                        "instance": instance,
+                    },
+                )
             return redirect(new_bgt.get_absolute_url())
         else:
-            return HttpResponse("invalid", bgt_edit_form.errors)
+            logger = logging.getLogger('print_logger')
+            logger.error("There was a validation error in form in bgt edit: "+str(bgt_edit_form.errors))
+            return render(
+                    request,
+                    "bgt/bgt.html",
+                    {
+                        "form": bgt_edit_form,
+                        "edit": "1",
+                        "instance": instance,
+                    },
+                )
 
     else:
         unique = name + "&&" + company + "&&" + date
-        instance = Bgt.objects.get(unique=unique)
-        edit_form = BgtEditForm(instance=instance)
+        instance = Bg.objects.get(unique=unique)
+        bgt_edit_form = BgtEditForm(instance=instance)
         return render(
             request,
             "bgt/bgt.html",
             {
-                "pdf": None,
-                "pax": None,
-                "form": edit_form,
+                "form": bgt_edit_form,
                 "edit": "1",
                 "instance": instance,
             },
@@ -532,28 +556,61 @@ def edit_sld(request, name, company, date, customer):
         if sld_edit_form.is_valid():
             new_sld = sld_edit_form.save(commit=False)
             # calculating the existing amount both for drug and bgt
-            bgt_baqi = pre_sld.bgt.baqi_amount
-            new_sld.drug.existing_amount = (
-                pre_sld.drug.existing_amount + pre_sld.amount - new_sld.amount
-            )
-            new_sld.bgt.baqi_amount = bgt_baqi + pre_sld.amount - new_sld.amount
-            new_sld.bgt.sld_amount = new_sld.bgt.amount - new_sld.bgt.baqi_amount
-            new_sld.bgt.save()
-            new_sld.drug.save()
-            new_sld.save()
+            try:
+                with atomic:
+                    bgt_baqi = pre_sld.bgt.baqi_amount
+                    new_sld.drug.existing_amount = (
+                        pre_sld.drug.existing_amount + pre_sld.amount - new_sld.amount
+                    )
+                    new_sld.bgt.baqi_amount = bgt_baqi + pre_sld.amount - new_sld.amount
+                    new_sld.bgt.sld_amount = (
+                        new_sld.bgt.amount - new_sld.bgt.baqi_amount
+                    )
+                    new_sld.bgt.save()
+                    new_sld.drug.save()
+                    new_sld.save()
+
+            except Exception as e:
+                logger = logging.getLogger('print_logger')
+                logger.error("There was an error editing sld:"+str(e))
+                return render(
+                    request,
+                    "sld/sld.html",
+                    {
+                        "pdf": None,
+                        "pax": None,
+                        "form": sld_edit_form,
+                        "instance": pre_sld,
+                        "edit": "1",
+                    },
+                )
             # pre_sld.delete() ---> does not work since memory reference are the same
             return redirect(new_sld.get_absolute_url())
         else:
-            return HttpResponse("THere was a problem", sld_edit_form.errors)
+            logger = logging.getLogger("print_logger")
+            logger.error(
+                "There was a validation error in form in sld edit: "
+                + str(sld_edit_form.errors)
+            )
+
+            return render(
+                request,
+                "sld/sld.html",
+                {
+                    "pdf": None,
+                    "pax": None,
+                    "form": sld_edit_form,
+                    "instance": pre_sld,
+                    "edit": "1",
+                },
+            )
     else:
-        sld_edit_frm = SldEdit(instance=pre_sld)
+        sld_edit_form = SldEdit(instance=pre_sld)
         return render(
             request,
             "sld/sld.html",
             {
-                "pdf": None,
-                "pax": None,
-                "form": sld_edit_frm,
+                "form": sld_edit_form,
                 "instance": pre_sld,
                 "edit": "1",
             },
@@ -564,13 +621,12 @@ def edit_sld(request, name, company, date, customer):
 @permission_required("main.drug-perm", raise_exception=True)
 def delete(request, name, company, date=None, customer=None):
     if customer:  # sld deletion
-        # print("customer",'sld',name,company,"?????????????????????")
         Sld.objects.get(
             name=name, company=company, date=date, customer=customer
         ).delete()
         return redirect(reverse("main:show_list", args=["sld"]))
     elif date:  # bgt deleiton
-        bgt = Bgt.objects.get(name=name, company=company, date=date)
+        bgt = Bg.objects.get(name=name, company=company, date=date)
         drug = Drg.objects.get(name=name, company=company)
         # deleting related slds
         if len(drug.bgts.all()) == 1:  # if it is the only remaining bgt
@@ -615,11 +671,11 @@ def show_list(request, list_type, term=None):
         sort_type = "-date"
     # handling list type to show
     if list_type == "bgt":
-        bgts = Bgt.objects.all().order_by(sort_type)
+        bgts = Bg.objects.all().order_by(sort_type)
         # handling search
         if term:
             messages.success(request, "نتایج جستجو برای " + term)
-            bgts = Bgt.objects.annotate(search=TrigramSimilarity("name", term)).filter(
+            bgts = Bg.objects.annotate(search=TrigramSimilarity("name", term)).filter(
                 search__gt=0.2
             )
         # if a bill number is given, show specifc bgts according to it
@@ -651,12 +707,12 @@ def show_list(request, list_type, term=None):
 @permission_required("main.drug-perm", raise_exception=True)
 def show_specific(request, list_type):
     """
-        This view returns bgts or slds of a specific drug
+    This view returns bgts or slds of a specific drug
     """
     data = request.GET["data"].split("&&")
     name, company = data[0], data[1]
     if list_type == "bgt":
-        bgts = Bgt.objects.filter(name=name, company=company).order_by("-date")
+        bgts = Bg.objects.filter(name=name, company=company).order_by("-date")
         return render(request, "bgt/list.html", {"bgts": bgts})
     else:
         slds = Sld.objects.filter(name=name, company=company).order_by("-date")
@@ -785,51 +841,60 @@ class UpdateNote(LoginRequiredMixin, UpdateView, PermissionRequiredMixin):
     success_url = reverse_lazy("main:notes_list_all")
     template_name = "finance/create_edit_note.html"
 
+
 @permission_required("main.purchase-perm")
 @login_required
-def manage_loan(request,id=None):
+def manage_loan(request, id=None):
     """this view handles deletion and creation of a load"""
-    instance = Loan.objects.filter(id=id).first() if id else None 
+    instance = Loan.objects.filter(id=id).first() if id else None
     if request.method == "GET":
         form = LoanForm()
-        edit=False
+        edit = False
         if instance:
             form = LoanForm(instance=instance)
-            edit=True
-        return render(request, "loan/create_loan.html",{'form':form,"edit":edit,"instance":instance})
+            edit = True
+        return render(
+            request,
+            "loan/create_loan.html",
+            {"form": form, "edit": edit, "instance": instance},
+        )
     else:
-        form = LoanForm(data=request.POST,files=request.FILES)
+        form = LoanForm(data=request.POST, files=request.FILES)
         if instance:
-            form = LoanForm(data=request.POST,instance=instance,files=request.FILES)
-            
+            form = LoanForm(data=request.POST, instance=instance, files=request.FILES)
+
         if form.is_valid():
             cd = form.cleaned_data
             # duplicate prevention
-            check = Loan.objects.filter(client_name=cd["client_name"],
-                                date=cd["date"],
-                                amount=cd["amount"],
-                                ).exists()
-                            
+            check = Loan.objects.filter(
+                client_name=cd["client_name"],
+                date=cd["date"],
+                amount=cd["amount"],
+            ).exists()
+
             if not check:
                 obj = form.save(commit=False)
                 if instance:
                     obj.client_id = instance.client_id
                 else:
                     # a new is being created, so taking files from FILES attribute of requestszzzzzz
-                    obj.client_id= request.FILES["client_id"]
+                    obj.client_id = request.FILES["client_id"]
                 obj.save()
-                
+
             return redirect("main:list_loans")
         else:
-            return render(request, "loan/create_loan.html", {"form": form,"errors":form.errors})
+            return render(
+                request, "loan/create_loan.html", {"form": form, "errors": form.errors}
+            )
 
 
 @login_required
 def list_loans(request):
     loans = Loan.objects.all()
-    return render(request,"loan/list.html",{'loans':loans})
+    return render(request, "loan/list.html", {"loans": loans})
+
 
 @permission_required("main.purchase-perm", raise_exception=True)
 @login_required
-def readQR(request):
+def read_qr_sell(request):
     return render(request, "sld/pre_sel_qr.html", context={"pax": None, "pdf": None})
