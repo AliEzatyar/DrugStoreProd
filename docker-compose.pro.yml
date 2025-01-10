@@ -15,7 +15,7 @@ services:
          - POSTGRES_USER=postgres
          - POSTGRES_PASSWORD=new_pass        
   webjaan:
-    build: .
+    image: tareeqshah/web:version1
     command: ["./wait-for-it.sh"," db_jaan:5434","--",
             "uwsgi","--ini", "/code/config/uwsgi/uwsgi.ini"]
             
