@@ -5,5 +5,4 @@ VENV/
 **.gitignore**
 **db.s**
 data/
-**logging**
 **media**

@@ -149,7 +149,7 @@ def buy(request):
 
             try:
                 drug = Drg.objects.get(unique=bgt.name + "&&" + bgt.company)
-                with atomic:
+                with atomic():
                     bgt.drug = drug
                     drug.existing_amount += (
                         bgt.amount
@@ -158,7 +158,7 @@ def buy(request):
                     drug.save()
 
             except Drg.DoesNotExist:
-                with atomic:
+                with atomic():
                     drug = Drg.objects.create(
                         name=bgt.name,
                         company=bgt.company,
@@ -171,7 +171,7 @@ def buy(request):
             existing_bill = BillBgt.objects.filter(number=bgt.bgt_bill)
             # setting the appropriate bill number for the sell object
             new_bill = None
-            with atomic:
+            with atomic():
                 if len(existing_bill) > 0:
                     existing_bill[0].bgts.add(bgt)
                 else:
@@ -286,7 +286,7 @@ def sell(request, id):
                 cd = form.cleaned_data
                 # finding the drug, its bgt and date| assiging bgt and drug objects to current sld
                 # making it atomic
-                with atomic:
+                with atomic():
                     bgt = Bg.objects.get(id=request.POST["bgt_id"])
                     drug = Drg.objects.get(id=bgt.drug.id)
                     sld_obj.drug = drug
@@ -494,7 +494,7 @@ def edit_bgt(request, name, company, date):
             new_drug = drug_edit_form.save(commit=False)
             # making it atomic
             try:
-                with atomic:
+                with atomic():
                     new_drug.existing_amount = (
                         pre_drug.existing_amount - pre_bgt.amount + new_bgt.amount
                     )
@@ -557,7 +557,7 @@ def edit_sld(request, name, company, date, customer):
             new_sld = sld_edit_form.save(commit=False)
             # calculating the existing amount both for drug and bgt
             try:
-                with atomic:
+                with atomic():
                     bgt_baqi = pre_sld.bgt.baqi_amount
                     new_sld.drug.existing_amount = (
                         pre_sld.drug.existing_amount + pre_sld.amount - new_sld.amount

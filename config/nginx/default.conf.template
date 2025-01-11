@@ -5,7 +5,7 @@ upstream django_app{
 
 server {
     listen 80;
-    server_name  x.com;
+    server_name  109.199.99.8;
     return 301 https://$host$request_uri;
 }
 

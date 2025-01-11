@@ -14,26 +14,31 @@ services:
          - POSTGRES_DB=postgres
          - POSTGRES_USER=postgres
          - POSTGRES_PASSWORD=new_pass        
+  
   webjaan:
-    image: tareeqshah/web:version1
+    image: tareeqshah/web:ver5
     command: ["./wait-for-it.sh"," db_jaan:5434","--",
             "uwsgi","--ini", "/code/config/uwsgi/uwsgi.ini"]
             
     restart: always
     ports:
       - "8000:8000"
-
+    volumes:
+      - .:/code
     
     environment:
       - DJANGO_SETTINGS_MODULE=DrugStore.settings.prod
       - DB_NAME=postgres
-      - DB_PASSWORD=new_pass
+      - DB_PASSWORD=postgres
       - DB_USER=postgres
       - DB_HOST=db_jaan
+
     depends_on:
       - db_jaan
       
   nginx_jaan:
+    depends_on:
+      - webjaan
     image: nginx:1.23.1
     restart: always
     volumes:

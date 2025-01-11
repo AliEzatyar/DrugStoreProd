@@ -2,14 +2,14 @@ import os
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
-from project.DrugStore import settings
+from DrugStore import settings
 from .models import BillSld, Sld, Bgt, Drug
 from django.db.transaction import atomic
 
 @receiver(pre_delete, sender=Sld)
 def sld_deletion(instance, *args, **kwargs):
     """instance is the object which is being deleted"""
-    with atomic:
+    with atomic():
         instance.bgt.sld_amount -= instance.amount
         instance.bgt.baqi_amount += instance.amount
         if instance.bgt.available == False:
@@ -21,7 +21,7 @@ def sld_deletion(instance, *args, **kwargs):
 
 @receiver(pre_delete, sender=Bgt)
 def bgt_deletion(instance, *args, **kwargs):
-    with atomic:
+    with atomic():
         instance.drug.existing_amount -= instance.amount
         instance.drug.save()
         instance.bill_object.delete(instance)
@@ -52,7 +52,7 @@ def rename_slds(instance, *args, **kwargs):
         return 0
     if pre_name.name != bgt.name:
         for sld in bgt.slds.all():
-            with atomic:
+            with atomic():
                 sld.name = bgt.name
                 sld.company = bgt.company
                 sld.save()
