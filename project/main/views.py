@@ -506,8 +506,8 @@ def edit_bgt(request, name, company, date):
                     new_bgt.save()
                 messages.success(request, "تغییرات موفقانه ثبت گردید.")
             except Exception as e:
-                logger = logging.getLogger('print_logger')
-                logger.error("There was an error editing bgt:"+str(e))
+                logger = logging.getLogger("print_logger")
+                logger.error("There was an error editing bgt:" + str(e))
                 return render(
                     request,
                     "bgt/bgt.html",
@@ -519,17 +519,20 @@ def edit_bgt(request, name, company, date):
                 )
             return redirect(new_bgt.get_absolute_url())
         else:
-            logger = logging.getLogger('print_logger')
-            logger.error("There was a validation error in form in bgt edit: "+str(bgt_edit_form.errors))
+            logger = logging.getLogger("print_logger")
+            logger.error(
+                "There was a validation error in form in bgt edit: "
+                + str(bgt_edit_form.errors)
+            )
             return render(
-                    request,
-                    "bgt/bgt.html",
-                    {
-                        "form": bgt_edit_form,
-                        "edit": "1",
-                        "instance": instance,
-                    },
-                )
+                request,
+                "bgt/bgt.html",
+                {
+                    "form": bgt_edit_form,
+                    "edit": "1",
+                    "instance": instance,
+                },
+            )
 
     else:
         unique = name + "&&" + company + "&&" + date
@@ -573,8 +576,8 @@ def edit_sld(request, name, company, date, customer):
                     new_sld.save()
 
             except Exception as e:
-                logger = logging.getLogger('print_logger')
-                logger.error("There was an error editing sld:"+str(e))
+                logger = logging.getLogger("print_logger")
+                logger.error("There was an error editing sld:" + str(e))
                 return render(
                     request,
                     "sld/sld.html",
@@ -631,9 +634,13 @@ def delete(request, name, company, date=None, customer=None):
         bgt = Bg.objects.get(name=name, company=company, date=date)
         drug = Drg.objects.get(name=name, company=company)
         # deleting related slds
-        if len(drug.bgts.all()) == 1:  # if it is the only remaining bgt
+        if (
+            hasattr(drug.bgts) and len(drug.bgts.all()) == 1
+        ):  # if it is the only remaining bgt
             drug.delete()  # deletes both drug and bgt and sld
-        elif len(drug.bgts.all()) > 1:  # if it is one of the collection
+        elif (
+            hasattr(drug.bgts) and len(drug.bgts.all()) > 1
+        ):  # if it is one of the collection
             bgt.delete()
             for sld in Sld.objects.filter(bgt=bgt):
                 sld.delete()
@@ -905,11 +912,9 @@ def read_qr_sell(request):
 @permission_required("main.purchase-perm", raise_exception=True)
 @login_required
 def read_logs(request):
-    log_file_path = os.path.join(settings.BASE_DIR ,"logging/info.log")
+    log_file_path = os.path.join(settings.BASE_DIR, "logging/info.log")
     logs = ""
-    with open(log_file_path,"r") as f:
+    with open(log_file_path, "r") as f:
         logs = f.read()
-    
-    return HttpResponse(logs)
-    
 
+    return HttpResponse(logs)

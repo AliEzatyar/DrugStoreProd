@@ -21,6 +21,7 @@ class Drug(models.Model):
     unique = models.CharField(max_length=60, blank=True, default="no name and company", unique=True)
     created = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
+    
     class Meta:
         indexes = [
             models.Index(fields=['-created']),

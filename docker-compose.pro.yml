@@ -1,31 +1,29 @@
-
 services:
 
   db_jaan:
-        image: postgres:14.5
-        ports:
-         - "5434:5432"
-        
-        restart: always
-        volumes:
-         - ./data/db:/var/lib/postgresql/data
+    image: postgres:14.5
+    ports:
+      - "5434:5432"
 
-        environment:
-         - POSTGRES_DB=postgres
-         - POSTGRES_USER=postgres
-         - POSTGRES_PASSWORD=new_pass        
-  
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=new_pass
+
   webjaan:
     image: tareeqshah/web:ver6
-    command: ["./wait-for-it.sh"," db_jaan:5434","--",
-            "uwsgi","--ini", "/code/config/uwsgi/uwsgi.ini"]
-            
+    command: [ "./wait-for-it.sh", " db_jaan:5434", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini" ]
+
     restart: always
     ports:
       - "8000:8000"
     volumes:
       - .:/code
-    
+
     environment:
       - DJANGO_SETTINGS_MODULE=DrugStore.settings.prod
       - DB_NAME=postgres
@@ -35,7 +33,7 @@ services:
 
     depends_on:
       - db_jaan
-      
+
   nginx_jaan:
     depends_on:
       - webjaan
