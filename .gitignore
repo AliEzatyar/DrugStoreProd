@@ -1,0 +1,7 @@
+newVenv
+VENV/
+**__pycache__**
+**.idea**
+**db.s**
+data/
+**media**
