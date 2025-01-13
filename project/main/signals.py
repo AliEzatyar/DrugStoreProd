@@ -2,7 +2,7 @@ import os
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
-from DrugStore import settings
+from django.conf import settings
 from .models import BillSld, Sld, Bgt, Drug
 from django.db.transaction import atomic
 

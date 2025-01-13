@@ -6,7 +6,7 @@ from django.apps import AppConfig
 from django.core.signals import request_started
 from django.dispatch import receiver
 
-from DrugStore import settings
+from django.conf import settings
 
 
 class MainConfig(AppConfig):

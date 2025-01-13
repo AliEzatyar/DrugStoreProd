@@ -5,3 +5,4 @@ VENV/
 **db.s**
 data/
 **media**
+**/admin/**
