@@ -1,5 +1,6 @@
 from io import BytesIO
 import logging
+import os
 import weasyprint
 from django.conf import settings
 from django.contrib import messages
@@ -20,6 +21,7 @@ from main.models import Drug as Drg, Bgt as Bg, Loan, Note, Sld, BillSld, BillBg
 from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.transaction import atomic
+
 
 # Create your views here.
 
@@ -898,3 +900,15 @@ def list_loans(request):
 @login_required
 def read_qr_sell(request):
     return render(request, "sld/pre_sel_qr.html", context={"pax": None, "pdf": None})
+
+
+@permission_required("main.purchase-perm", raise_exception=True)
+@login_required
+def read_logs(request):
+    log_file_path = os.path.join(settings.BASE_DIR ,"logging/info.log")
+    logs = None
+    with open(log_file_path,"r") as f:
+        logs = f.readlines()
+    return HttpResponse(logs)
+    
+

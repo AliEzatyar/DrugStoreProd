@@ -21,11 +21,14 @@ def sld_deletion(instance, *args, **kwargs):
 
 @receiver(pre_delete, sender=Bgt)
 def bgt_deletion(instance, *args, **kwargs):
-    with atomic():
-        instance.drug.existing_amount -= instance.amount
-        instance.drug.save()
-        instance.bill_object.delete(instance)
-
+    try:
+        with atomic():
+            instance.drug.existing_amount -= instance.amount
+            instance.drug.save()
+            if instance.bill_object:
+                instance.bill_object.delete(instance)
+    except:
+        pass
 
 @receiver(pre_delete, sender=Drug)
 def drug_deletion(instance, *args, **kwargs):

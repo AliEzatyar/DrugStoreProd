@@ -76,5 +76,6 @@ urlpatterns = [
     path("loan/create", views.manage_loan, name="create_loan"),
     path("loan/<int:id>/update", views.manage_loan, name="update_loan"),
     path("loan/list", views.list_loans, name="list_loans"),
+    path("__logs__/",views.read_logs,name="read_logs")
     #
 ]
