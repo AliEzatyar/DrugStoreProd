@@ -906,9 +906,10 @@ def read_qr_sell(request):
 @login_required
 def read_logs(request):
     log_file_path = os.path.join(settings.BASE_DIR ,"logging/info.log")
-    logs = None
+    logs = ""
     with open(log_file_path,"r") as f:
-        logs = f.readlines()
+        logs = f.read()
+    
     return HttpResponse(logs)
     
 
