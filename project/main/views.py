@@ -634,13 +634,9 @@ def delete(request, name, company, date=None, customer=None):
         bgt = Bg.objects.get(name=name, company=company, date=date)
         drug = Drg.objects.get(name=name, company=company)
         # deleting related slds
-        if (
-            hasattr(drug.bgts) and len(drug.bgts.all()) == 1
-        ):  # if it is the only remaining bgt
+        if hasattr(drug,'bgts') and len(drug.bgts.all()) == 1:  # if it is the only remaining bgt
             drug.delete()  # deletes both drug and bgt and sld
-        elif (
-            hasattr(drug.bgts) and len(drug.bgts.all()) > 1
-        ):  # if it is one of the collection
+        elif hasattr(drug,'bgts') and len(drug.bgts.all()) > 1:  # if it is one of the collection
             bgt.delete()
             for sld in Sld.objects.filter(bgt=bgt):
                 sld.delete()
