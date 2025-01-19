@@ -21,7 +21,7 @@ from main.models import Drug as Drg, Bgt as Bg, Loan, Note, Sld, BillSld, BillBg
 from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.transaction import atomic
-
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -215,13 +215,10 @@ def buy(request):
                 request,
                 "bgt/bgt.html",
                 {
-                    "pdf": None,
-                    "pax": None,
                     "form": form,
                     "drugs": drugs,
-                    "edit": None,
                     "media_url": media_url,
-                    "errors": form.errors,
+                    "errors": True,
                 },
             )
     else:
@@ -304,10 +301,8 @@ def sell(request, id):
                     drug.save()
                     sld_obj.save()
 
-            except Exception as e:
-                messages.error(request, "خطا در ثبت فروش!")
-                logObjec = logging.getLogger("print_logger")
-                logObjec.info(str(form.errors))
+            except IntegrityError:
+                messages.error(request, "این خرید قبلا ثبت شده!")
                 return render(
                     request,
                     "sld/sld.html",

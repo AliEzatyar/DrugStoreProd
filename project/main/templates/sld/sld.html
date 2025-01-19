@@ -7,8 +7,7 @@
 {% endblock %}
 {% block content %}
 {% if edit %}
-    <form dir="rtl" id='forma' enctype="multipart/form-data" method="post"
-            action="{% url 'main:edit_sld' instance.name instance.company instance.date instance.customer %}">
+    <form dir="rtl" id='forma' enctype="multipart/form-data" method="post" action="{% url 'main:edit_sld' instance.name instance.company instance.date instance.customer %}">
 {% else %}
     <form dir="rtl" id="sell_form" method="post" enctype="multipart/form-data">
 {% endif %}
@@ -104,12 +103,22 @@
                 {% csrf_token %}
         </div>
         <div id="photo">
-                {% if errors %}
-                    <ul id="errors">
-                    خطا!
-                        {{errors}}
+                <ul>
+                    <!-- form field errors -->
+                {% for field in form %}
+                    {% if field.errors %}
+                        {% for err in field.errors %}
+                            <li class="mb-0 alert alert-danger show-notification w-100" style="color: red;">{{ err }}</li>
+                            <br>
+                            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                <!-- non fiedl errors -->
+                {%for error in form.non_field_errors%}
+                    <li class="alert alert-danger show-notification w-100" style="color: red;">{{ error }}</li>
+                    <br>
+                {%endfor%}
                 </ul>
-                {% endif %}
                 {% if edit or qrcode %}
                     <img id="img-preview" class="img img-responsive img-thumbnail"  src="{{ instance.drug.photo.url }}">
                 {% endif %}

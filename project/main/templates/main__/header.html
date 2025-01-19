@@ -28,14 +28,11 @@
         {% endif %}
     </div>
     {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li style="list-style-type:none;" class="{{ message.tags }}">
-            <a style="margin-left:5%;text-decoration:none;" href="#" onclick="document.querySelector('.messages').remove()" class="close">X</a>
-            
-            {{ message|safe }}
-        </li>
-        {% endfor %}
-    </ul>
+            {% for m in messages %}
+              <div class="alert alert-{{m.tags}} show-notification w-100" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ m|safe }}
+              </div>
+            {% endfor %}
     {% endif %}
-    {% endif %}
+{%endif%}

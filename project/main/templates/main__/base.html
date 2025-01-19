@@ -1,23 +1,30 @@
 {% load static %}
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/main/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/boot/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/boot/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'css/boot/bootstrap.css.map' %}">
-    <link rel="stylesheet" href="{% static 'css/boot/bootstrap.min.css.map' %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
-    {% block head %}{% endblock %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>
+    {% block title %}
+    {% endblock %}
+  </title>
+  <link rel="stylesheet" href="{% static 'css/main/base.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/boot/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/boot/bootstrap.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/boot/bootstrap.css.map' %}" />
+  <link rel="stylesheet" href="{% static 'css/boot/bootstrap.min.css.map' %}" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia" />
+
+
+  {% block head %}
+  {% endblock %}
 </head>
 
 <body>
-    {% include 'main__/header.html' %}
-    <div id="contents">
-        {% block content %}
-        {% endblock %}
-    </div>
+  {% include 'main__/header.html' %}
+  <div id="contents">
+    {% block content %}
+
+    {% endblock %}
+  </div>
 </body>
 {% block js_block %}
 
