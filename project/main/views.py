@@ -912,5 +912,4 @@ def read_logs(request):
     logs = ""
     with open(log_file_path, "r") as f:
         logs = f.read()
-
-    return HttpResponse(logs)
+    return HttpResponse(logs,content_type="text/plain")

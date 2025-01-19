@@ -28,8 +28,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
                         qrbox: { width: 250, height: 250 }
                     },
                     (decodedText, decodedResult) => {
-                        const drug_id = decodedText.split("_", 1)
-                        const url = window.location.protocol + "//" + window.location.host + `/sell/${drug_id}`
+                        const url = decodedText
                         window.location.href = url
                     }
                 )

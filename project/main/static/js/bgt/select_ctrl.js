@@ -1,18 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // select functionality
     const selectableElements = document.querySelectorAll(".selectable");
+    // getting header in order to hide it
     const header = document.getElementById("header")
     const ids = new Array() // each element (id,name,amount)
     selectableElements.forEach(element => {
         element.addEventListener("click", (event) => {
-            if (event.ctrlKey) { // Check if Ctrl key is pressed
-                element.classList.toggle("selected"); // Toggle selection
+            if (event.ctrlKey) { // Check if Ctrl key is also being pressed
+                element.classList.toggle("selected"); // Toggle selection -> turn off/on
                 header.style.display = "none"
                 ids.push([element.dataset.id, element.dataset.name, element.dataset.amount])
 
             } else {
                 // Deselect other elements if Ctrl is not pressed
                 selectableElements.forEach(el => el.classList.remove("selected"));
-                header.style.display = "flex"
+                header.style.display = "flex" // show the header back
             }
         });
     });
@@ -26,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contextMenu.style.display = "block"; // Show the menu
     });
 
-    // Hide the context menu on click elsewhere
+    // Hide the context menu on click else where
     document.addEventListener("click", () => {
         contextMenu.style.display = "none";
     });
@@ -38,8 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // showing header --> active line bellow
         // document.getElementBy/Id("header").style.display = "flex";
 
+        // container to show all qr photos being generated
         const all_qrs = document.createElement('div')
         all_qrs.id = "qrs";
+        // we cannot say document.appendChild()
         document.body.appendChild(all_qrs);
 
         ids.forEach(el => {
@@ -54,9 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 wholeContainer.classList.add("wholePhoto")
                 // just photo
                 const qrPhoto = document.createElement("div")
-                qrPhoto.innerHTML = "";
+                qrPhoto.innerHTML = ""; // necessary
                 new QRCode(qrPhoto, {
-                    text: el[0] + "_" + el[1],
+                    text: window.location.protocol + "//" + window.location.host + `/sell/${el[0]}`,
                     width: 100, // Width of the QR code
                     height: 100, // Height of the QR code
                     colorDark: "#000000", // QR code color

@@ -4,9 +4,12 @@
 <script src="{%static 'js/sld/html5qr.js' %}"></script>
   <script src="{% static 'js/bgt/qr_reading.js' %}"></script>
   <dialog id="dialog">
+    <button class="btn btn-danger btn-xsm w-100"  onclick="document.getElementById('dialog').remove()">X</button>
+    <p></p>
     <div>
-      <select id="cameraSelection"></select>
+      <select class="btn btn-success" id="cameraSelection"></select>
     </div>
+    <p></p>
     <div id="reader" style="width: 300px;"></div>
   </dialog>
 {% endblock %}
